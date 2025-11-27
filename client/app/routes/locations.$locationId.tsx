@@ -1,8 +1,8 @@
 import { Link, useLoaderData } from "react-router";
-import { locationsApi, type Location, type Art } from "../lib/api";
-import { Card, CardContent } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
+import { locationsApi, type Location, type Art } from "@/lib/api";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Image, MapPin } from "lucide-react";
 import type { Route } from "./+types/locations.$locationId";
 

@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:3001/api
+
+### Get All Artists
+GET {{baseUrl}}/artists
+
+### Get Artist by ID
+# Replace with actual UUID after creating an artist
+GET {{baseUrl}}/artists/{{artistId}}
+
+### Create an Artist
+POST {{baseUrl}}/artists
+Content-Type: application/json
+
+{
+  "name": "Michael Whelan",
+  "website": "https://www.michaelwhelan.com",
+  "bio": "Award-winning fantasy and science fiction artist known for book covers."
+}
+
+### Create Another Artist
+POST {{baseUrl}}/artists
+Content-Type: application/json
+
+{
+  "name": "Dan dos Santos",
+  "website": "https://www.dandossantos.com",
+  "bio": "Illustrator specializing in fantasy and science fiction cover art."
+}
+
+### Update an Artist
+# Replace with actual UUID
+PUT {{baseUrl}}/artists/{{artistId}}
+Content-Type: application/json
+
+{
+  "name": "Michael Whelan",
+  "bio": "Hugo Award-winning fantasy and science fiction artist."
+}
+
+### Delete an Artist
+# Replace with actual UUID
+DELETE {{baseUrl}}/artists/{{artistId}}

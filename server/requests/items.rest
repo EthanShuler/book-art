@@ -1,0 +1,55 @@
+@baseUrl = http://localhost:3001/api
+
+### Get Item by ID
+# Replace with actual UUID after creating an item
+GET {{baseUrl}}/items/{{itemId}}
+
+### Create an Item
+POST {{baseUrl}}/items
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "name": "Shardblade",
+  "description": "A magical sword that can cut through anything except living flesh, which it kills instantly.",
+  "image": "https://example.com/shardblade.jpg"
+}
+
+### Create Another Item
+POST {{baseUrl}}/items
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "name": "Shardplate",
+  "description": "Magical armor that provides incredible strength and protection.",
+  "image": "https://example.com/shardplate.jpg"
+}
+
+### Create a Third Item
+POST {{baseUrl}}/items
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "name": "Sphere",
+  "description": "Glass spheres containing gems that hold Stormlight, used as currency.",
+  "image": "https://example.com/sphere.jpg"
+}
+
+### Update an Item
+# Replace with actual UUID
+PUT {{baseUrl}}/items/{{itemId}}
+Content-Type: application/json
+
+{
+  "name": "Shardblade (Oathbringer)",
+  "description": "Dalinar's legendary Shardblade, one of the finest ever created."
+}
+
+### Delete an Item
+# Replace with actual UUID
+DELETE {{baseUrl}}/items/{{itemId}}
+
+### Get Art featuring an Item
+GET {{baseUrl}}/items/{{itemId}}/art

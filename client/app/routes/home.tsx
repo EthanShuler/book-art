@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { BookOpen, ArrowRight } from "lucide-react";
-import { Button } from "../components/ui/button";
+import { Button } from "@/components/ui/button";
 
 export function meta() {
   return [

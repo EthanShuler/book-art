@@ -1,8 +1,8 @@
 import { Link, useLoaderData, useSearchParams } from "react-router";
-import { artApi, type Art } from "../lib/api";
-import { Card, CardContent } from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Button } from "../components/ui/button";
+import { artApi, type Art } from "@/lib/api";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Search, Image } from "lucide-react";
 import { useState } from "react";
 import type { Route } from "./+types/search";
@@ -52,7 +52,7 @@ export default function SearchPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search for books, characters, locations, items..."
+              placeholder="Search for books, characters, locations, items@."
               className="pl-10"
               value={query}
               onChange={(e) => setQuery(e.target.value)}

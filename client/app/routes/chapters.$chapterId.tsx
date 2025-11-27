@@ -1,8 +1,8 @@
 import { Link, useLoaderData } from "react-router";
-import { chaptersApi, booksApi, type Art, type Chapter } from "../lib/api";
-import { Card, CardContent } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
+import { chaptersApi, booksApi, type Art, type Chapter } from "@/lib/api";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ChevronLeft, ChevronRight, Image } from "lucide-react";
 import type { Route } from "./+types/chapters.$chapterId";
 

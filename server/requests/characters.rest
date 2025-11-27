@@ -1,0 +1,55 @@
+@baseUrl = http://localhost:3001/api
+
+### Get Character by ID
+# Replace with actual UUID after creating a character
+GET {{baseUrl}}/characters/{{characterId}}
+
+### Create a Character
+POST {{baseUrl}}/characters
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "name": "Kaladin Stormblessed",
+  "description": "A former soldier turned bridgeman who becomes a legendary warrior.",
+  "image": "https://example.com/kaladin.jpg"
+}
+
+### Create Another Character
+POST {{baseUrl}}/characters
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "name": "Shallan Davar",
+  "description": "A young woman from a minor noble house with hidden talents.",
+  "image": "https://example.com/shallan.jpg"
+}
+
+### Create a Third Character
+POST {{baseUrl}}/characters
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "name": "Dalinar Kholin",
+  "description": "The Blackthorn, a highprince of Alethkar seeking to unite the warring factions.",
+  "image": "https://example.com/dalinar.jpg"
+}
+
+### Update a Character
+# Replace with actual UUID
+PUT {{baseUrl}}/characters/{{characterId}}
+Content-Type: application/json
+
+{
+  "name": "Kaladin Stormblessed",
+  "description": "Captain of the Cobalt Guard, formerly a bridgeman and soldier."
+}
+
+### Delete a Character
+# Replace with actual UUID
+DELETE {{baseUrl}}/characters/{{characterId}}
+
+### Get Art featuring a Character
+GET {{baseUrl}}/characters/{{characterId}}/art

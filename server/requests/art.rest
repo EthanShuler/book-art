@@ -1,0 +1,90 @@
+@baseUrl = http://localhost:3001/api
+
+### Get All Art (paginated)
+GET {{baseUrl}}/art
+
+### Get Art with pagination
+GET {{baseUrl}}/art?page=1&limit=10
+
+### Get Art by ID
+# Replace with actual UUID after creating art
+GET {{baseUrl}}/art/{{artId}}
+
+### Search Art by query
+GET {{baseUrl}}/art/search?q=battle
+
+### Search Art by book
+GET {{baseUrl}}/art/search?bookId={{bookId}}
+
+### Search Art by chapter
+GET {{baseUrl}}/art/search?chapterId={{chapterId}}
+
+### Search Art with multiple filters
+GET {{baseUrl}}/art/search?q=storm&bookId={{bookId}}
+
+### Create Art (basic - book only)
+POST {{baseUrl}}/art
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "title": "The Bridge Four Salute",
+  "description": "Bridge Four giving their iconic salute.",
+  "imageUrl": "https://example.com/bridge-four-salute.jpg",
+  "tags": ["bridge four", "kaladin", "soldiers"]
+}
+
+### Create Art (with chapter)
+POST {{baseUrl}}/art
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "chapterId": "{{chapterId}}",
+  "title": "Szeth in the Night",
+  "description": "Szeth-son-son-Vallano performing his deadly mission.",
+  "imageUrl": "https://example.com/szeth-assassination.jpg",
+  "artistId": "{{artistId}}",
+  "tags": ["szeth", "assassination", "prologue"]
+}
+
+### Create Art with Character/Location/Item associations
+POST {{baseUrl}}/art
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "chapterId": "{{chapterId}}",
+  "title": "Kaladin on the Shattered Plains",
+  "description": "Kaladin wielding his spear during a bridge run.",
+  "imageUrl": "https://example.com/kaladin-bridge-run.jpg",
+  "artistId": "{{artistId}}",
+  "tags": ["kaladin", "bridge run", "action"],
+  "characters": ["{{characterId}}"],
+  "locations": ["{{locationId}}"],
+  "items": ["{{itemId}}"]
+}
+
+### Update Art
+# Replace with actual UUID
+PUT {{baseUrl}}/art/{{artId}}
+Content-Type: application/json
+
+{
+  "title": "The Bridge Four Salute (Updated)",
+  "description": "Bridge Four giving their iconic salute to Captain Kaladin.",
+  "tags": ["bridge four", "kaladin", "soldiers", "honor"]
+}
+
+### Update Art associations
+PUT {{baseUrl}}/art/{{artId}}
+Content-Type: application/json
+
+{
+  "characters": ["{{characterId}}", "{{characterId2}}"],
+  "locations": ["{{locationId}}"]
+}
+
+### Delete Art
+# Replace with actual UUID
+DELETE {{baseUrl}}/art/{{artId}}

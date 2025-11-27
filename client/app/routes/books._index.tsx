@@ -1,7 +1,7 @@
 import { Link, useLoaderData } from "react-router";
-import { booksApi, type Book } from "../lib/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Skeleton } from "../components/ui/skeleton";
+import { booksApi, type Book } from "@/lib/api";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function meta() {
   return [

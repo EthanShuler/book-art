@@ -1,0 +1,44 @@
+@baseUrl = http://localhost:3001/api
+
+### Get Chapter by ID
+# Replace with actual UUID after creating a chapter
+GET {{baseUrl}}/chapters/{{chapterId}}
+
+### Create a Chapter
+POST {{baseUrl}}/chapters
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "title": "Prologue: To Kill",
+  "chapterNumber": 0,
+  "description": "The prologue chapter introducing Szeth-son-son-Vallano."
+}
+
+### Create Another Chapter
+POST {{baseUrl}}/chapters
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "title": "Chapter 1: Stormblessed",
+  "chapterNumber": 1,
+  "description": "Kaladin's introduction as a bridgeman."
+}
+
+### Update a Chapter
+# Replace with actual UUID
+PUT {{baseUrl}}/chapters/{{chapterId}}
+Content-Type: application/json
+
+{
+  "title": "Prologue: To Kill (Updated)",
+  "description": "Updated prologue description."
+}
+
+### Delete a Chapter
+# Replace with actual UUID
+DELETE {{baseUrl}}/chapters/{{chapterId}}
+
+### Get Art for a Chapter
+GET {{baseUrl}}/chapters/{{chapterId}}/art

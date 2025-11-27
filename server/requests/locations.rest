@@ -1,0 +1,55 @@
+@baseUrl = http://localhost:3001/api
+
+### Get Location by ID
+# Replace with actual UUID after creating a location
+GET {{baseUrl}}/locations/{{locationId}}
+
+### Create a Location
+POST {{baseUrl}}/locations
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "name": "The Shattered Plains",
+  "description": "A vast expanse of rocky plateaus separated by deep chasms, site of the war against the Parshendi.",
+  "image": "https://example.com/shattered-plains.jpg"
+}
+
+### Create Another Location
+POST {{baseUrl}}/locations
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "name": "Kharbranth",
+  "description": "The City of Bells, known for its great library the Palanaeum.",
+  "image": "https://example.com/kharbranth.jpg"
+}
+
+### Create a Third Location
+POST {{baseUrl}}/locations
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "name": "Urithiru",
+  "description": "The legendary city of the Knights Radiant, located high in the mountains.",
+  "image": "https://example.com/urithiru.jpg"
+}
+
+### Update a Location
+# Replace with actual UUID
+PUT {{baseUrl}}/locations/{{locationId}}
+Content-Type: application/json
+
+{
+  "name": "The Shattered Plains",
+  "description": "A vast warcamp area and battlefield on Roshar."
+}
+
+### Delete a Location
+# Replace with actual UUID
+DELETE {{baseUrl}}/locations/{{locationId}}
+
+### Get Art featuring a Location
+GET {{baseUrl}}/locations/{{locationId}}/art

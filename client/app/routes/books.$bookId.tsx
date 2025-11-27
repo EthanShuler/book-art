@@ -1,9 +1,9 @@
 import { Link, useLoaderData, useParams } from "react-router";
-import { booksApi, type Book, type Chapter, type Character, type Location, type Item } from "../lib/api";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
-import { Button } from "../components/ui/button";
+import { booksApi, type Book, type Chapter, type Character, type Location, type Item } from "@/lib/api";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ArrowLeft, BookOpen, Users, MapPin, Package } from "lucide-react";
 import type { Route } from "./+types/books.$bookId";
 

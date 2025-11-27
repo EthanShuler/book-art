@@ -1,14 +1,14 @@
-### Health Check
-GET http://localhost:3001/health
+@baseUrl = http://localhost:3001/api
 
 ### Get All Books
-GET http://localhost:3001/api/books
+GET {{baseUrl}}/books
 
 ### Get Book by ID
-GET http://localhost:3001/api/books/1
+# Replace with actual UUID after creating a book
+GET {{baseUrl}}/books/{{bookId}}
 
 ### Create a Book
-POST http://localhost:3001/api/books
+POST {{baseUrl}}/books
 Content-Type: application/json
 
 {
@@ -19,9 +19,8 @@ Content-Type: application/json
 }
 
 ### Create Another Book
-POST http://localhost:3001/api/books
+POST {{baseUrl}}/books
 Content-Type: application/json
-
 
 {
   "title": "The Fellowship of the Ring",
@@ -31,7 +30,8 @@ Content-Type: application/json
 }
 
 ### Update a Book
-PUT http://localhost:3001/api/books/1
+# Replace with actual UUID
+PUT {{baseUrl}}/books/{{bookId}}
 Content-Type: application/json
 
 {
@@ -42,4 +42,20 @@ Content-Type: application/json
 }
 
 ### Delete a Book
-DELETE http://localhost:3001/api/books/a6490a7b-b74c-423c-b5b0-b984fe6c6673
+# Replace with actual UUID
+DELETE {{baseUrl}}/books/{{bookId}}
+
+### Get Chapters for a Book
+GET {{baseUrl}}/books/{{bookId}}/chapters
+
+### Get Characters for a Book
+GET {{baseUrl}}/books/{{bookId}}/characters
+
+### Get Locations for a Book
+GET {{baseUrl}}/books/{{bookId}}/locations
+
+### Get Items for a Book
+GET {{baseUrl}}/books/{{bookId}}/items
+
+### Get Art for a Book
+GET {{baseUrl}}/books/{{bookId}}/art

@@ -1,0 +1,5 @@
+### Health Check
+GET http://localhost:3001/health
+
+### API Base Health
+GET http://localhost:3001/api

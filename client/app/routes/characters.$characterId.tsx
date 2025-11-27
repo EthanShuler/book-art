@@ -1,8 +1,8 @@
 import { Link, useLoaderData } from "react-router";
-import { charactersApi, type Character, type Art } from "../lib/api";
-import { Card, CardContent } from "../components/ui/card";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
+import { charactersApi, type Character, type Art } from "@/lib/api";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Image, Users } from "lucide-react";
 import type { Route } from "./+types/characters.$characterId";
 
