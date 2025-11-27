@@ -1,18 +1,35 @@
 @baseUrl = http://localhost:3001/api
 
+### Login
+# @name postLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "13ethanshuler@gmail.com",
+  "password": "Password123"
+}
+
+### Get token
+@token = {{postLogin.response.body.token}}
+
 ### Get Character by ID
 # Replace with actual UUID after creating a character
 GET {{baseUrl}}/characters/{{characterId}}
 
-### Create a Character
+### Get books a character appears in
+GET {{baseUrl}}/characters/{{characterId}}/books
+
+### Create a Character (with series and optional book associations)
 POST {{baseUrl}}/characters
 Content-Type: application/json
 
 {
-  "bookId": "{{bookId}}",
-  "name": "Kaladin Stormblessed",
-  "description": "A former soldier turned bridgeman who becomes a legendary warrior.",
-  "image": "https://example.com/kaladin.jpg"
+  "seriesId": "{{seriesId}}",
+  "name": "Frodo Baggins",
+  "description": "Frodo Baggins was a hobbit of the Shire in the late Third Age.",
+  "image": "https://static.wikia.nocookie.net/lotr/images/3/32/Frodo_%28FotR%29.png/revision/latest?cb=20221006065757",
+  "bookIds": ["{{bookId1}}", "{{bookId2}}"]
 }
 
 ### Create Another Character
@@ -20,10 +37,11 @@ POST {{baseUrl}}/characters
 Content-Type: application/json
 
 {
-  "bookId": "{{bookId}}",
+  "seriesId": "{{seriesId}}",
   "name": "Shallan Davar",
   "description": "A young woman from a minor noble house with hidden talents.",
-  "image": "https://example.com/shallan.jpg"
+  "image": "https://example.com/shallan.jpg",
+  "bookIds": ["{{bookId}}"]
 }
 
 ### Create a Third Character
@@ -31,21 +49,33 @@ POST {{baseUrl}}/characters
 Content-Type: application/json
 
 {
-  "bookId": "{{bookId}}",
+  "seriesId": "{{seriesId}}",
   "name": "Dalinar Kholin",
   "description": "The Blackthorn, a highprince of Alethkar seeking to unite the warring factions.",
   "image": "https://example.com/dalinar.jpg"
 }
 
-### Update a Character
+### Update a Character (can also update book associations)
 # Replace with actual UUID
 PUT {{baseUrl}}/characters/{{characterId}}
 Content-Type: application/json
 
 {
   "name": "Kaladin Stormblessed",
-  "description": "Captain of the Cobalt Guard, formerly a bridgeman and soldier."
+  "description": "Captain of the Cobalt Guard, formerly a bridgeman and soldier.",
+  "bookIds": ["{{bookId1}}", "{{bookId2}}", "{{bookId3}}"]
 }
+
+### Associate character with a book
+POST {{baseUrl}}/characters/{{characterId}}/books
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}"
+}
+
+### Remove character from a book
+DELETE {{baseUrl}}/characters/{{characterId}}/books/{{bookId}}
 
 ### Delete a Character
 # Replace with actual UUID

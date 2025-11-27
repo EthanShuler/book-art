@@ -1,18 +1,35 @@
 @baseUrl = http://localhost:3001/api
 
+### Login
+# @name postLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "13ethanshuler@gmail.com",
+  "password": "Password123"
+}
+
+### Get token
+@token = {{postLogin.response.body.token}}
+
 ### Get Location by ID
 # Replace with actual UUID after creating a location
 GET {{baseUrl}}/locations/{{locationId}}
 
-### Create a Location
+### Get books a location appears in
+GET {{baseUrl}}/locations/{{locationId}}/books
+
+### Create a Location (with series and optional book associations)
 POST {{baseUrl}}/locations
 Content-Type: application/json
 
 {
-  "bookId": "{{bookId}}",
+  "seriesId": "{{seriesId}}",
   "name": "The Shattered Plains",
   "description": "A vast expanse of rocky plateaus separated by deep chasms, site of the war against the Parshendi.",
-  "image": "https://example.com/shattered-plains.jpg"
+  "image": "https://example.com/shattered-plains.jpg",
+  "bookIds": ["{{bookId1}}", "{{bookId2}}"]
 }
 
 ### Create Another Location
@@ -20,10 +37,11 @@ POST {{baseUrl}}/locations
 Content-Type: application/json
 
 {
-  "bookId": "{{bookId}}",
+  "seriesId": "{{seriesId}}",
   "name": "Kharbranth",
   "description": "The City of Bells, known for its great library the Palanaeum.",
-  "image": "https://example.com/kharbranth.jpg"
+  "image": "https://example.com/kharbranth.jpg",
+  "bookIds": ["{{bookId}}"]
 }
 
 ### Create a Third Location
@@ -31,21 +49,33 @@ POST {{baseUrl}}/locations
 Content-Type: application/json
 
 {
-  "bookId": "{{bookId}}",
+  "seriesId": "{{seriesId}}",
   "name": "Urithiru",
   "description": "The legendary city of the Knights Radiant, located high in the mountains.",
   "image": "https://example.com/urithiru.jpg"
 }
 
-### Update a Location
+### Update a Location (can also update book associations)
 # Replace with actual UUID
 PUT {{baseUrl}}/locations/{{locationId}}
 Content-Type: application/json
 
 {
   "name": "The Shattered Plains",
-  "description": "A vast warcamp area and battlefield on Roshar."
+  "description": "A vast warcamp area and battlefield on Roshar.",
+  "bookIds": ["{{bookId1}}", "{{bookId2}}"]
 }
+
+### Associate location with a book
+POST {{baseUrl}}/locations/{{locationId}}/books
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}"
+}
+
+### Remove location from a book
+DELETE {{baseUrl}}/locations/{{locationId}}/books/{{bookId}}
 
 ### Delete a Location
 # Replace with actual UUID

@@ -7,10 +7,12 @@ import locationsRoutes from './locations';
 import itemsRoutes from './items';
 import artRoutes from './art';
 import artistsRoutes from './artists';
+import seriesRoutes from './series';
 
 const router = Router();
 
 router.use('/auth', authRoutes);
+router.use('/series', seriesRoutes);
 router.use('/books', booksRoutes);
 router.use('/chapters', chaptersRoutes);
 router.use('/characters', charactersRoutes);

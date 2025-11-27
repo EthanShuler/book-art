@@ -1,0 +1,59 @@
+@baseUrl = http://localhost:3001/api
+
+
+### Login
+# @name postLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "13ethanshuler@gmail.com",
+  "password": "Password123"
+}
+
+### Get token
+@token = {{postLogin.response.body.token}}
+
+### Get all series
+GET {{baseUrl}}/series
+
+### Get single series
+GET {{baseUrl}}/series/{{seriesId}}
+
+### Get books in a series
+GET {{baseUrl}}/series/{{seriesId}}/books
+
+### Get characters in a series
+GET {{baseUrl}}/series/{{seriesId}}/characters
+
+### Get locations in a series
+GET {{baseUrl}}/series/{{seriesId}}/locations
+
+### Get items in a series
+GET {{baseUrl}}/series/{{seriesId}}/items
+
+### Create series (admin only)
+POST {{baseUrl}}/series
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "The Lord of the Rings",
+  "description": "Epic high-fantasy novel by J.R.R. Tolkien",
+  "author": "J.R.R. Tolkien",
+  "cover_image_url": https://tolkiengateway.net/w/images/thumb/c/c3/The_Lord_of_the_Rings_1954-55.png/640px-The_Lord_of_the_Rings_1954-55.png"
+}
+
+### Update series (admin only)
+PUT {{baseUrl}}/series/{{seriesId}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "The Lord of the Rings Trilogy",
+  "description": "Updated description for the series"
+}
+
+### Delete series (admin only)
+DELETE {{baseUrl}}/series/{{seriesId}}
+Authorization: Bearer {{token}}

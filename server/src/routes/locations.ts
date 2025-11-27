@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { query } from '../db';
+import { adminOnly } from '../middleware/auth';
 
 const router = Router();
 
@@ -21,27 +22,60 @@ router.get('/:id', async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/locations (admin only)
-router.post('/', async (req: Request, res: Response) => {
+// GET /api/locations/:id/books - Get all books a location appears in
+router.get('/:id/books', async (req: Request, res: Response) => {
   try {
-    const { bookId, name, description, image } = req.body;
+    const { id } = req.params;
     const result = await query(
-      `INSERT INTO locations (book_id, name, description, image)
+      `SELECT b.* FROM books b
+       JOIN book_locations bl ON b.id = bl.book_id
+       WHERE bl.location_id = $1
+       ORDER BY b.title ASC`,
+      [id]
+    );
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch books for location' });
+  }
+});
+
+// POST /api/locations (admin only)
+router.post('/', adminOnly, async (req: Request, res: Response) => {
+  try {
+    const { seriesId, name, description, image, bookIds } = req.body;
+    
+    // Insert location
+    const result = await query(
+      `INSERT INTO locations (series_id, name, description, image)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [bookId, name, description, image]
+      [seriesId, name, description, image]
     );
-    res.status(201).json(result.rows[0]);
+    const location = result.rows[0];
+
+    // Associate with books if provided
+    if (bookIds && Array.isArray(bookIds) && bookIds.length > 0) {
+      const bookValues = bookIds.map((bookId: string, index: number) => 
+        `($${index * 2 + 1}, $${index * 2 + 2})`
+      ).join(', ');
+      const bookParams = bookIds.flatMap((bookId: string) => [bookId, location.id]);
+      await query(
+        `INSERT INTO book_locations (book_id, location_id) VALUES ${bookValues}`,
+        bookParams
+      );
+    }
+
+    res.status(201).json(location);
   } catch (error) {
     res.status(500).json({ error: 'Failed to create location' });
   }
 });
 
 // PUT /api/locations/:id (admin only)
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description, image } = req.body;
+    const { name, description, image, bookIds } = req.body;
     const result = await query(
       `UPDATE locations
        SET name = COALESCE($1, name),
@@ -56,6 +90,25 @@ router.put('/:id', async (req: Request, res: Response) => {
       res.status(404).json({ error: 'Location not found' });
       return;
     }
+
+    // Update book associations if provided
+    if (bookIds && Array.isArray(bookIds)) {
+      // Remove existing associations
+      await query('DELETE FROM book_locations WHERE location_id = $1', [id]);
+      
+      // Add new associations
+      if (bookIds.length > 0) {
+        const bookValues = bookIds.map((bookId: string, index: number) => 
+          `($${index * 2 + 1}, $${index * 2 + 2})`
+        ).join(', ');
+        const bookParams = bookIds.flatMap((bookId: string) => [bookId, id]);
+        await query(
+          `INSERT INTO book_locations (book_id, location_id) VALUES ${bookValues}`,
+          bookParams
+        );
+      }
+    }
+
     res.json(result.rows[0]);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update location' });
@@ -63,7 +116,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 });
 
 // DELETE /api/locations/:id (admin only)
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const result = await query(
@@ -77,6 +130,36 @@ router.delete('/:id', async (req: Request, res: Response) => {
     res.json({ message: 'Location deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete location' });
+  }
+});
+
+// POST /api/locations/:id/books - Associate location with a book (admin only)
+router.post('/:id/books', adminOnly, async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { bookId } = req.body;
+    
+    await query(
+      'INSERT INTO book_locations (book_id, location_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+      [bookId, id]
+    );
+    res.status(201).json({ message: 'Location associated with book' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to associate location with book' });
+  }
+});
+
+// DELETE /api/locations/:id/books/:bookId - Remove location from book (admin only)
+router.delete('/:id/books/:bookId', adminOnly, async (req: Request, res: Response) => {
+  try {
+    const { id, bookId } = req.params;
+    await query(
+      'DELETE FROM book_locations WHERE book_id = $1 AND location_id = $2',
+      [bookId, id]
+    );
+    res.json({ message: 'Location removed from book' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to remove location from book' });
   }
 });
 

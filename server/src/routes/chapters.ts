@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { query } from '../db';
+import { adminOnly } from '../middleware/auth';
 
 const router = Router();
 
@@ -22,7 +23,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // POST /api/chapters (admin only)
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', adminOnly, async (req: Request, res: Response) => {
   try {
     const { bookId, title, chapterNumber, summary } = req.body;
     
@@ -46,7 +47,7 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // PUT /api/chapters/:id (admin only)
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { title, chapterNumber, summary } = req.body;
@@ -75,7 +76,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 });
 
 // DELETE /api/chapters/:id (admin only)
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     

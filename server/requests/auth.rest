@@ -5,9 +5,9 @@ POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "email": "user@example.com",
-  "password": "securepassword123",
-  "username": "testuser"
+  "email": "13ethanshuler@gmail.com",
+  "password": "Password123",
+  "username": "ethanshuler"
 }
 
 ### Register an admin user (set is_admin manually in DB)
@@ -21,13 +21,17 @@ Content-Type: application/json
 }
 
 ### Login
+# @name postLogin
 POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-  "email": "user@example.com",
-  "password": "securepassword123"
+  "email": "13ethanshuler@gmail.com",
+  "password": "Password123"
 }
+
+### Get token
+@token = {{postLogin.response.body.token}}
 
 ### Get current user (requires Bearer token)
 # Copy the token from login response

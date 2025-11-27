@@ -1,18 +1,35 @@
 @baseUrl = http://localhost:3001/api
 
+### Login
+# @name postLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "13ethanshuler@gmail.com",
+  "password": "Password123"
+}
+
+### Get token
+@token = {{postLogin.response.body.token}}
+
 ### Get Item by ID
 # Replace with actual UUID after creating an item
 GET {{baseUrl}}/items/{{itemId}}
 
-### Create an Item
+### Get books an item appears in
+GET {{baseUrl}}/items/{{itemId}}/books
+
+### Create an Item (with series and optional book associations)
 POST {{baseUrl}}/items
 Content-Type: application/json
 
 {
-  "bookId": "{{bookId}}",
+  "seriesId": "{{seriesId}}",
   "name": "Shardblade",
   "description": "A magical sword that can cut through anything except living flesh, which it kills instantly.",
-  "image": "https://example.com/shardblade.jpg"
+  "image": "https://example.com/shardblade.jpg",
+  "bookIds": ["{{bookId1}}", "{{bookId2}}"]
 }
 
 ### Create Another Item
@@ -20,10 +37,11 @@ POST {{baseUrl}}/items
 Content-Type: application/json
 
 {
-  "bookId": "{{bookId}}",
+  "seriesId": "{{seriesId}}",
   "name": "Shardplate",
   "description": "Magical armor that provides incredible strength and protection.",
-  "image": "https://example.com/shardplate.jpg"
+  "image": "https://example.com/shardplate.jpg",
+  "bookIds": ["{{bookId}}"]
 }
 
 ### Create a Third Item
@@ -31,21 +49,33 @@ POST {{baseUrl}}/items
 Content-Type: application/json
 
 {
-  "bookId": "{{bookId}}",
+  "seriesId": "{{seriesId}}",
   "name": "Sphere",
   "description": "Glass spheres containing gems that hold Stormlight, used as currency.",
   "image": "https://example.com/sphere.jpg"
 }
 
-### Update an Item
+### Update an Item (can also update book associations)
 # Replace with actual UUID
 PUT {{baseUrl}}/items/{{itemId}}
 Content-Type: application/json
 
 {
   "name": "Shardblade (Oathbringer)",
-  "description": "Dalinar's legendary Shardblade, one of the finest ever created."
+  "description": "Dalinar's legendary Shardblade, one of the finest ever created.",
+  "bookIds": ["{{bookId1}}", "{{bookId2}}", "{{bookId3}}"]
 }
+
+### Associate item with a book
+POST {{baseUrl}}/items/{{itemId}}/books
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}"
+}
+
+### Remove item from a book
+DELETE {{baseUrl}}/items/{{itemId}}/books/{{bookId}}
 
 ### Delete an Item
 # Replace with actual UUID

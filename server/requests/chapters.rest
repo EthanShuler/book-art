@@ -1,18 +1,32 @@
 @baseUrl = http://localhost:3001/api
 
+### Login
+# @name postLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "13ethanshuler@gmail.com",
+  "password": "Password123"
+}
+
+### Get token
+@token = {{postLogin.response.body.token}}
+
 ### Get Chapter by ID
 # Replace with actual UUID after creating a chapter
 GET {{baseUrl}}/chapters/{{chapterId}}
 
 ### Create a Chapter
 POST {{baseUrl}}/chapters
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "bookId": "{{bookId}}",
-  "title": "Prologue: To Kill",
-  "chapterNumber": 0,
-  "description": "The prologue chapter introducing Szeth-son-son-Vallano."
+  "bookId": "34d17577-b041-4d22-bd73-31bd2d726eed",
+  "title": "The Shadow of the Past",
+  "chapterNumber": 2,
+  "description": "On April 12, 3018, Gandalf returns to Bag End after many years and explains to Frodo the true nature of Bilbo's (now Frodo's) magic ring, how it is the One Ring and must be destroyed for the good of the Shire and all the Free Peoples of the world."
 }
 
 ### Create Another Chapter

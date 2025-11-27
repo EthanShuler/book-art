@@ -1,5 +1,18 @@
 @baseUrl = http://localhost:3001/api
 
+### Login
+# @name postLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "13ethanshuler@gmail.com",
+  "password": "Password123"
+}
+
+### Get token
+@token = {{postLogin.response.body.token}}
+
 ### Get All Art (paginated)
 GET {{baseUrl}}/art
 
@@ -25,6 +38,7 @@ GET {{baseUrl}}/art/search?q=storm&bookId={{bookId}}
 ### Create Art (basic - book only)
 POST {{baseUrl}}/art
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
   "bookId": "{{bookId}}",

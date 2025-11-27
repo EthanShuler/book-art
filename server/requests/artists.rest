@@ -1,5 +1,17 @@
 @baseUrl = http://localhost:3001/api
 
+### Login
+# @name postLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "13ethanshuler@gmail.com",
+  "password": "Password123"
+}
+
+@token = {{postLogin.response.body.token}}
+
 ### Get All Artists
 GET {{baseUrl}}/artists
 
@@ -9,6 +21,7 @@ GET {{baseUrl}}/artists/{{artistId}}
 
 ### Create an Artist
 POST {{baseUrl}}/artists
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {

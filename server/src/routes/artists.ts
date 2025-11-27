@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { query } from '../db';
+import { adminOnly } from '../middleware/auth';
 
 const router = Router();
 
@@ -32,7 +33,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // POST /api/artists (admin only)
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', adminOnly, async (req: Request, res: Response) => {
   try {
     const { name, website, bio } = req.body;
     const result = await query(
@@ -43,12 +44,13 @@ router.post('/', async (req: Request, res: Response) => {
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
+    console.error('Error creating artist:', error);
     res.status(500).json({ error: 'Failed to create artist' });
   }
 });
 
 // PUT /api/artists/:id (admin only)
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { name, website, bio } = req.body;
@@ -73,7 +75,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 });
 
 // DELETE /api/artists/:id (admin only)
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const result = await query(

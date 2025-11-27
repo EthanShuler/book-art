@@ -1,0 +1,91 @@
+@baseUrl = http://localhost:3001/api
+
+### Login
+# @name postLogin
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "13ethanshuler@gmail.com",
+  "password": "Password123"
+}
+
+### Get token
+@token = {{postLogin.response.body.token}}
+
+### Create series (admin only)
+# @name postSeries
+POST {{baseUrl}}/series
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "title": "The Lord of the Rings",
+  "description": "Epic high-fantasy novel by J.R.R. Tolkien",
+  "author": "J.R.R. Tolkien",
+  "cover_image_url": "https://tolkiengateway.net/w/images/thumb/c/c3/The_Lord_of_the_Rings_1954-55.png/640px-The_Lord_of_the_Rings_1954-55.png"
+}
+
+### Get Series ID
+@seriesId = {{postSeries.response.body.id}}
+
+### Create A Book
+# @name postBook
+POST {{baseUrl}}/books
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "The Fellowship of the Ring",
+  "author": "J.R.R. Tolkien",
+  "description": "An epic fantasy novel and the first book in The Lord of the Rings series.",
+  "coverImageUrl": "https://m.media-amazon.com/images/I/71Ep7UNeTtL._AC_UF1000,1000_QL80_.jpg",
+  "seriesId": "{{seriesId}}"
+}
+
+### Get Book ID
+@bookId = 7d929674-7442-423a-83a5-97c4ca97c74c
+# @bookId = {{postBook.response.body.id}}
+
+### Create a Chapter 1
+# @name postChapterOne
+POST {{baseUrl}}/chapters
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "title": "A Long-expected Party",
+  "chapterNumber": 1,
+  "description": "Gandalf arrives in the Shire for Bilbo's Farewell Birthday Party. Bilbo leaves the Shire permanently, willing Bag End and the One Ring to his nephew Frodo Baggins."
+}
+
+### Get Chapter 1 ID
+@chapter1Id = {{postChapterOne.response.body.id}}
+
+### Create a Chapter 2
+# @name postChapterTwo
+POST {{baseUrl}}/chapters
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "bookId": "{{bookId}}",
+  "title": "The Shadow of the Past",
+  "chapterNumber": 2,
+  "description": "On April 12, 3018, Gandalf returns to Bag End after many years and explains to Frodo the true nature of Bilbo's (now Frodo's) magic ring, how it is the One Ring and must be destroyed for the good of the Shire and all the Free Peoples of the world."
+}
+
+### Get Chapter 2 ID
+@chapter2Id = {{postChapterTwo.response.body.id}}
+
+### Create an Artist
+POST {{baseUrl}}/artists
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Michael Whelan",
+  "website": "https://www.michaelwhelan.com",
+  "bio": "Award-winning fantasy and science fiction artist known for book covers."
+}

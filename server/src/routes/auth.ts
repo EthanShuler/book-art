@@ -30,15 +30,16 @@ router.post('/register', async (req: Request, res: Response) => {
     const result = await query(
       `INSERT INTO users (email, password_hash, username)
        VALUES ($1, $2, $3)
-       RETURNING id, email, username, is_admin, created_at`,
+       RETURNING id, email, username, role, created_at`,
       [email, passwordHash, username]
     );
 
     const user = result.rows[0];
+    const isAdmin = user.role === 'admin';
 
     // Generate token
     const token = jwt.sign(
-      { userId: user.id, email: user.email, isAdmin: user.is_admin },
+      { userId: user.id, email: user.email, isAdmin },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -74,8 +75,9 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     // Generate token
+    const isAdmin = user.role === 'admin';
     const token = jwt.sign(
-      { userId: user.id, email: user.email, isAdmin: user.is_admin },
+      { userId: user.id, email: user.email, isAdmin },
       JWT_SECRET,
       { expiresIn: '7d' }
     );
@@ -112,7 +114,7 @@ router.get('/me', async (req: Request, res: Response) => {
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
 
     const result = await query(
-      'SELECT id, email, username, is_admin, created_at FROM users WHERE id = $1',
+      'SELECT id, email, username, role, created_at FROM users WHERE id = $1',
       [decoded.userId]
     );
 

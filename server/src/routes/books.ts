@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { query } from '../db';
+import { adminOnly } from '../middleware/auth';
 
 const router = Router();
 
@@ -33,9 +34,9 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // POST /api/books (admin only)
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', adminOnly, async (req: Request, res: Response) => {
   try {
-    const { title, author, description, coverImageUrl } = req.body;
+    const { title, author, description, coverImageUrl, seriesId } = req.body;
     
     if (!title) {
       res.status(400).json({ error: 'Title is required' });
@@ -43,10 +44,10 @@ router.post('/', async (req: Request, res: Response) => {
     }
     
     const result = await query(
-      `INSERT INTO books (title, author, description, cover_image_url)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO books (title, author, description, cover_image_url, series_id)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [title, author || null, description || null, coverImageUrl || null]
+      [title, author || null, description || null, coverImageUrl || null, seriesId || null]
     );
     
     res.status(201).json({ book: result.rows[0], message: 'Book created successfully' });
@@ -57,10 +58,10 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 // PUT /api/books/:id (admin only)
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, author, description, coverImageUrl } = req.body;
+    const { title, author, description, coverImageUrl, seriesId } = req.body;
     
     const result = await query(
       `UPDATE books 
@@ -68,10 +69,11 @@ router.put('/:id', async (req: Request, res: Response) => {
            author = COALESCE($2, author),
            description = COALESCE($3, description),
            cover_image_url = COALESCE($4, cover_image_url),
+           series_id = COALESCE($5, series_id),
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $5
+       WHERE id = $6
        RETURNING *`,
-      [title, author, description, coverImageUrl, id]
+      [title, author, description, coverImageUrl, seriesId, id]
     );
     
     if (result.rows.length === 0) {
@@ -87,7 +89,7 @@ router.put('/:id', async (req: Request, res: Response) => {
 });
 
 // DELETE /api/books/:id (admin only)
-router.delete('/:id', async (req: Request, res: Response) => {
+router.delete('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     
@@ -125,7 +127,9 @@ router.get('/:id/characters', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const result = await query(
-      'SELECT * FROM characters WHERE book_id = $1 ORDER BY name ASC',
+      `SELECT c.* FROM characters c
+       JOIN book_characters bc ON c.id = bc.character_id
+       WHERE bc.book_id = $1 ORDER BY c.name ASC`,
       [id]
     );
     res.json({ characters: result.rows });
@@ -140,7 +144,9 @@ router.get('/:id/locations', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const result = await query(
-      'SELECT * FROM locations WHERE book_id = $1 ORDER BY name ASC',
+      `SELECT l.* FROM locations l
+       JOIN book_locations bl ON l.id = bl.location_id
+       WHERE bl.book_id = $1 ORDER BY l.name ASC`,
       [id]
     );
     res.json({ locations: result.rows });
@@ -155,7 +161,9 @@ router.get('/:id/items', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const result = await query(
-      'SELECT * FROM items WHERE book_id = $1 ORDER BY name ASC',
+      `SELECT i.* FROM items i
+       JOIN book_items bi ON i.id = bi.item_id
+       WHERE bi.book_id = $1 ORDER BY i.name ASC`,
       [id]
     );
     res.json({ items: result.rows });

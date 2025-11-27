@@ -42,40 +42,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-      {/* Features Section */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">How It Works</h2>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <FeatureCard
-              icon="📚"
-              title="Choose a Book"
-              description="Browse our collection of books with curated artwork from talented artists."
-            />
-            <FeatureCard
-              icon="📖"
-              title="Read by Chapter"
-              description="Navigate through chapters and see art that brings each scene to life."
-            />
-            <FeatureCard
-              icon="🎨"
-              title="Appreciate Art"
-              description="Discover character portraits, locations, and important items from the story."
-            />
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function FeatureCard({ icon, title, description }: { icon: string; title: string; description: string }) {
-  return (
-    <div className="bg-background rounded-xl p-6 shadow-sm border">
-      <div className="text-4xl mb-4">{icon}</div>
-      <h3 className="text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
     </div>
   );
 }

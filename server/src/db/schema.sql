@@ -14,10 +14,23 @@ CREATE TABLE IF NOT EXISTS users (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Series table
+CREATE TABLE IF NOT EXISTS series (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title VARCHAR(255) NOT NULL,
+  author VARCHAR(255),
+  description TEXT,
+  cover_image_url VARCHAR(500),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Books table
 CREATE TABLE IF NOT EXISTS books (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  series_id UUID REFERENCES series(id) ON DELETE CASCADE,
   title VARCHAR(255) NOT NULL,
+  book_number INTEGER,
   author VARCHAR(255),
   description TEXT,
   cover_image_url VARCHAR(500),
@@ -37,10 +50,10 @@ CREATE TABLE IF NOT EXISTS chapters (
   UNIQUE(book_id, chapter_number)
 );
 
--- Characters table
+-- Characters table (belongs to series)
 CREATE TABLE IF NOT EXISTS characters (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  book_id UUID REFERENCES books(id) ON DELETE CASCADE,
+  series_id UUID REFERENCES series(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   description TEXT,
   image_url VARCHAR(500),
@@ -48,10 +61,10 @@ CREATE TABLE IF NOT EXISTS characters (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Locations table
+-- Locations table (belongs to series)
 CREATE TABLE IF NOT EXISTS locations (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  book_id UUID REFERENCES books(id) ON DELETE CASCADE,
+  series_id UUID REFERENCES series(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   description TEXT,
   image_url VARCHAR(500),
@@ -59,10 +72,10 @@ CREATE TABLE IF NOT EXISTS locations (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Items table
+-- Items table (belongs to series)
 CREATE TABLE IF NOT EXISTS items (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  book_id UUID REFERENCES books(id) ON DELETE CASCADE,
+  series_id UUID REFERENCES series(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
   description TEXT,
   image_url VARCHAR(500),
@@ -74,7 +87,8 @@ CREATE TABLE IF NOT EXISTS items (
 CREATE TABLE IF NOT EXISTS artists (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name VARCHAR(255) NOT NULL,
-  profile_url VARCHAR(500),
+  website VARCHAR(500),
+  bio TEXT,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
@@ -116,11 +130,33 @@ CREATE TABLE IF NOT EXISTS art_items (
   PRIMARY KEY (art_id, item_id)
 );
 
+-- Junction table: Book <-> Characters (characters can appear in multiple books)
+CREATE TABLE IF NOT EXISTS book_characters (
+  book_id UUID REFERENCES books(id) ON DELETE CASCADE,
+  character_id UUID REFERENCES characters(id) ON DELETE CASCADE,
+  PRIMARY KEY (book_id, character_id)
+);
+
+-- Junction table: Book <-> Locations (locations can appear in multiple books)
+CREATE TABLE IF NOT EXISTS book_locations (
+  book_id UUID REFERENCES books(id) ON DELETE CASCADE,
+  location_id UUID REFERENCES locations(id) ON DELETE CASCADE,
+  PRIMARY KEY (book_id, location_id)
+);
+
+-- Junction table: Book <-> Items (items can appear in multiple books)
+CREATE TABLE IF NOT EXISTS book_items (
+  book_id UUID REFERENCES books(id) ON DELETE CASCADE,
+  item_id UUID REFERENCES items(id) ON DELETE CASCADE,
+  PRIMARY KEY (book_id, item_id)
+);
+
 -- Indexes for better query performance
+CREATE INDEX IF NOT EXISTS idx_books_series_id ON books(series_id);
 CREATE INDEX IF NOT EXISTS idx_chapters_book_id ON chapters(book_id);
-CREATE INDEX IF NOT EXISTS idx_characters_book_id ON characters(book_id);
-CREATE INDEX IF NOT EXISTS idx_locations_book_id ON locations(book_id);
-CREATE INDEX IF NOT EXISTS idx_items_book_id ON items(book_id);
+CREATE INDEX IF NOT EXISTS idx_characters_series_id ON characters(series_id);
+CREATE INDEX IF NOT EXISTS idx_locations_series_id ON locations(series_id);
+CREATE INDEX IF NOT EXISTS idx_items_series_id ON items(series_id);
 CREATE INDEX IF NOT EXISTS idx_art_book_id ON art(book_id);
 CREATE INDEX IF NOT EXISTS idx_art_chapter_id ON art(chapter_id);
 CREATE INDEX IF NOT EXISTS idx_art_order ON art(chapter_id, order_index);
