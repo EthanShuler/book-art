@@ -1,0 +1,45 @@
+### Health Check
+GET http://localhost:3001/health
+
+### Get All Books
+GET http://localhost:3001/api/books
+
+### Get Book by ID
+GET http://localhost:3001/api/books/1
+
+### Create a Book
+POST http://localhost:3001/api/books
+Content-Type: application/json
+
+{
+  "title": "The Way of Kings",
+  "author": "Brandon Sanderson",
+  "description": "The first book in The Stormlight Archive series.",
+  "coverImageUrl": "https://example.com/way-of-kings.jpg"
+}
+
+### Create Another Book
+POST http://localhost:3001/api/books
+Content-Type: application/json
+
+
+{
+  "title": "The Fellowship of the Ring",
+  "author": "J.R.R. Tolkien",
+  "description": "An epic fantasy novel and the first book in The Lord of the Rings series.",
+  "coverImageUrl": "https://example.com/lord-of-the-rings.jpg"
+}
+
+### Update a Book
+PUT http://localhost:3001/api/books/1
+Content-Type: application/json
+
+{
+  "title": "The Way of Kings",
+  "author": "Brandon Sanderson",
+  "description": "An epic fantasy novel and the first book in The Stormlight Archive.",
+  "coverImageUrl": "https://example.com/way-of-kings-updated.jpg"
+}
+
+### Delete a Book
+DELETE http://localhost:3001/api/books/a6490a7b-b74c-423c-b5b0-b984fe6c6673
