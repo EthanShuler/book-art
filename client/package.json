@@ -1,5 +1,5 @@
 {
-  "name": "book-art",
+  "name": "client",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,6 +9,8 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@radix-ui/react-slot": "^1.1.0",
+    "@radix-ui/react-tabs": "^1.1.0",
     "@react-router/node": "^7.9.2",
     "@react-router/serve": "^7.9.2",
     "class-variance-authority": "^0.7.1",
