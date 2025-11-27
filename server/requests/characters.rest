@@ -23,13 +23,14 @@ GET {{baseUrl}}/characters/{{characterId}}/books
 ### Create a Character (with series and optional book associations)
 POST {{baseUrl}}/characters
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-  "seriesId": "{{seriesId}}",
-  "name": "Frodo Baggins",
-  "description": "Frodo Baggins was a hobbit of the Shire in the late Third Age.",
-  "image": "https://static.wikia.nocookie.net/lotr/images/3/32/Frodo_%28FotR%29.png/revision/latest?cb=20221006065757",
-  "bookIds": ["{{bookId1}}", "{{bookId2}}"]
+  "seriesId": "44a109f2-c9c3-486d-9ae1-04f840da6bfa",
+  "name": "Gandalf",
+  "description": "Wizard.",
+  "imageUrl": "https://preview.redd.it/does-anyone-else-prefer-gandalf-the-grey-to-gandalf-the-v0-m2irq834fejc1.jpeg?auto=webp&s=75f3a543c781a6f5e52a19a68f4f0ee729f365a5",
+  "bookIds": ["7d929674-7442-423a-83a5-97c4ca97c74c"]
 }
 
 ### Create Another Character

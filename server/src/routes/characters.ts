@@ -16,7 +16,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       res.status(404).json({ error: 'Character not found' });
       return;
     }
-    res.json(result.rows[0]);
+    res.json({ character: result.rows[0] });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch character' });
   }
@@ -42,14 +42,14 @@ router.get('/:id/books', async (req: Request, res: Response) => {
 // POST /api/characters (admin only)
 router.post('/', adminOnly, async (req: Request, res: Response) => {
   try {
-    const { seriesId, name, description, image, bookIds } = req.body;
+    const { seriesId, name, description, imageUrl, bookIds } = req.body;
     
     // Insert character
     const result = await query(
-      `INSERT INTO characters (series_id, name, description, image)
+      `INSERT INTO characters (series_id, name, description, image_url)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [seriesId, name, description, image]
+      [seriesId, name, description, imageUrl]
     );
     const character = result.rows[0];
 
@@ -75,16 +75,16 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
 router.put('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description, image, bookIds } = req.body;
+    const { name, description, imageUrl, bookIds } = req.body;
     const result = await query(
       `UPDATE characters
        SET name = COALESCE($1, name),
            description = COALESCE($2, description),
-           image = COALESCE($3, image),
+           image_url = COALESCE($3, image_url),
            updated_at = NOW()
        WHERE id = $4
        RETURNING *`,
-      [name, description, image, id]
+      [name, description, imageUrl, id]
     );
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Character not found' });
@@ -174,9 +174,34 @@ router.get('/:id/art', async (req: Request, res: Response) => {
        ORDER BY a.created_at DESC`,
       [id]
     );
-    res.json(result.rows);
+    res.json({ art: result.rows });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch art' });
+  }
+});
+
+// GET /api/characters - Get all characters with optional pagination
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const { page = 1, limit = 20 } = req.query;
+    const offset = (Number(page) - 1) * Number(limit);
+    
+    const countResult = await query('SELECT COUNT(*) FROM characters');
+    const total = parseInt(countResult.rows[0].count);
+    
+    const result = await query(
+      `SELECT * FROM characters ORDER BY name ASC LIMIT $1 OFFSET $2`,
+      [Number(limit), offset]
+    );
+    
+    res.json({
+      characters: result.rows,
+      total,
+      page: Number(page),
+      limit: Number(limit)
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch characters' });
   }
 });
 

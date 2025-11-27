@@ -16,7 +16,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       res.status(404).json({ error: 'Item not found' });
       return;
     }
-    res.json(result.rows[0]);
+    res.json({ item: result.rows[0] });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch item' });
   }
@@ -42,14 +42,14 @@ router.get('/:id/books', async (req: Request, res: Response) => {
 // POST /api/items (admin only)
 router.post('/', adminOnly, async (req: Request, res: Response) => {
   try {
-    const { seriesId, name, description, image, bookIds } = req.body;
+    const { seriesId, name, description, imageUrl, bookIds } = req.body;
     
     // Insert item
     const result = await query(
-      `INSERT INTO items (series_id, name, description, image)
+      `INSERT INTO items (series_id, name, description, image_url)
        VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [seriesId, name, description, image]
+      [seriesId, name, description, imageUrl]
     );
     const item = result.rows[0];
 
@@ -75,16 +75,16 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
 router.put('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description, image, bookIds } = req.body;
+    const { name, description, imageUrl, bookIds } = req.body;
     const result = await query(
       `UPDATE items
        SET name = COALESCE($1, name),
            description = COALESCE($2, description),
-           image = COALESCE($3, image),
+           image_url = COALESCE($3, image_url),
            updated_at = NOW()
        WHERE id = $4
        RETURNING *`,
-      [name, description, image, id]
+      [name, description, imageUrl, id]
     );
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Item not found' });
@@ -174,7 +174,7 @@ router.get('/:id/art', async (req: Request, res: Response) => {
        ORDER BY a.created_at DESC`,
       [id]
     );
-    res.json(result.rows);
+    res.json({ art: result.rows });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch art' });
   }

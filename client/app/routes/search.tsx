@@ -52,7 +52,7 @@ export default function SearchPage() {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search for books, characters, locations, items@."
+              placeholder="Search for books, characters, locations, items"
               className="pl-10"
               value={query}
               onChange={(e) => setQuery(e.target.value)}

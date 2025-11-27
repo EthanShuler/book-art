@@ -51,32 +51,33 @@ Authorization: Bearer {{token}}
 ### Create Art (with chapter)
 POST {{baseUrl}}/art
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-  "bookId": "{{bookId}}",
-  "chapterId": "{{chapterId}}",
-  "title": "Szeth in the Night",
-  "description": "Szeth-son-son-Vallano performing his deadly mission.",
-  "imageUrl": "https://example.com/szeth-assassination.jpg",
-  "artistId": "{{artistId}}",
-  "tags": ["szeth", "assassination", "prologue"]
+  "bookId": "7d929674-7442-423a-83a5-97c4ca97c74c",
+  "chapterId": "b1661868-3c4b-4b13-81b1-eb7f84fd1968",
+  "title": "Bilbo's Party 2",
+  "description": "A second time.",
+  "imageUrl": "https://tolkiengateway.net/w/images/thumb/8/81/Inger_Edelfeldt_-_A_Long_Expected_Party.jpg/304px-Inger_Edelfeldt_-_A_Long_Expected_Party.jpg",
+  "artistId": "fa44fba6-d4ca-43b9-8e6c-cf89da183279",
+  "tags": ["Bilbo", "Shire"]
 }
 
 ### Create Art with Character/Location/Item associations
 POST {{baseUrl}}/art
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-  "bookId": "{{bookId}}",
-  "chapterId": "{{chapterId}}",
-  "title": "Kaladin on the Shattered Plains",
-  "description": "Kaladin wielding his spear during a bridge run.",
-  "imageUrl": "https://example.com/kaladin-bridge-run.jpg",
-  "artistId": "{{artistId}}",
-  "tags": ["kaladin", "bridge run", "action"],
-  "characters": ["{{characterId}}"],
-  "locations": ["{{locationId}}"],
-  "items": ["{{itemId}}"]
+  "bookId": "7d929674-7442-423a-83a5-97c4ca97c74c",
+  "chapterId": "f203abb2-6a53-4e6d-8284-74176a80c1cd",
+  "title": "Gandalf and Frodo",
+  "description": "Gandalf explains the Danger.",
+  "imageUrl": "https://tolkiengateway.net/w/images/thumb/d/dc/Matt_Stewart_-_The_Shadow_of_the_Past.jpg/256px-Matt_Stewart_-_The_Shadow_of_the_Past.jpg",
+  "artistId": "fa44fba6-d4ca-43b9-8e6c-cf89da183279",
+  "tags": ["gandalf", "frodo", "hobbiton", "shire", "Bag-End"],
+  "characters": ["93530d2e-b0fb-4f77-bf40-af5df00a6c4a", "d30f9015-9496-4e50-a21a-cba7edfa9d75"],
+  "locations": ["7259945f-01c4-44d6-a846-e3dd0c7f80db", "4c2becfa-3091-4515-a090-f3b8f9cdae6f"]
 }
 
 ### Update Art

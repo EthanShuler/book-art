@@ -23,13 +23,14 @@ GET {{baseUrl}}/locations/{{locationId}}/books
 ### Create a Location (with series and optional book associations)
 POST {{baseUrl}}/locations
 Content-Type: application/json
+Authorization: Bearer {{token}}
 
 {
-  "seriesId": "{{seriesId}}",
-  "name": "The Shattered Plains",
-  "description": "A vast expanse of rocky plateaus separated by deep chasms, site of the war against the Parshendi.",
-  "image": "https://example.com/shattered-plains.jpg",
-  "bookIds": ["{{bookId1}}", "{{bookId2}}"]
+  "seriesId": "44a109f2-c9c3-486d-9ae1-04f840da6bfa",
+  "name": "Bag End",
+  "description": "The home of Bilbo Baggins.",
+  "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Baggins_residence_%27Bag_End%27_with_party_sign.jpg/1200px-Baggins_residence_%27Bag_End%27_with_party_sign.jpg",
+  "bookIds": ["7d929674-7442-423a-83a5-97c4ca97c74c"]
 }
 
 ### Create Another Location
