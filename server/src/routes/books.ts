@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { query } from '../db';
 import { adminOnly } from '../middleware/auth';
+import { toCamelCase, rowsToCamelCase } from '../utils/caseConverter';
 
 const router = Router();
 
@@ -8,7 +9,7 @@ const router = Router();
 router.get('/', async (_req: Request, res: Response) => {
   try {
     const result = await query('SELECT * FROM books ORDER BY created_at DESC');
-    res.json({ books: result.rows });
+    res.json({ books: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching books:', error);
     res.status(500).json({ error: 'Failed to fetch books' });
@@ -26,7 +27,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       return;
     }
     
-    res.json({ book: result.rows[0] });
+    res.json({ book: toCamelCase(result.rows[0]) });
   } catch (error) {
     console.error('Error fetching book:', error);
     res.status(500).json({ error: 'Failed to fetch book' });
@@ -50,7 +51,7 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
       [title, author || null, description || null, coverImageUrl || null, seriesId || null]
     );
     
-    res.status(201).json({ book: result.rows[0], message: 'Book created successfully' });
+    res.status(201).json({ book: toCamelCase(result.rows[0]), message: 'Book created successfully' });
   } catch (error) {
     console.error('Error creating book:', error);
     res.status(500).json({ error: 'Failed to create book' });
@@ -81,7 +82,7 @@ router.put('/:id', adminOnly, async (req: Request, res: Response) => {
       return;
     }
     
-    res.json({ book: result.rows[0], message: 'Book updated successfully' });
+    res.json({ book: toCamelCase(result.rows[0]), message: 'Book updated successfully' });
   } catch (error) {
     console.error('Error updating book:', error);
     res.status(500).json({ error: 'Failed to update book' });
@@ -115,7 +116,7 @@ router.get('/:id/chapters', async (req: Request, res: Response) => {
       'SELECT * FROM chapters WHERE book_id = $1 ORDER BY chapter_number ASC',
       [id]
     );
-    res.json({ chapters: result.rows });
+    res.json({ chapters: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching chapters:', error);
     res.status(500).json({ error: 'Failed to fetch chapters' });
@@ -132,7 +133,7 @@ router.get('/:id/characters', async (req: Request, res: Response) => {
        WHERE bc.book_id = $1 ORDER BY c.name ASC`,
       [id]
     );
-    res.json({ characters: result.rows });
+    res.json({ characters: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching characters:', error);
     res.status(500).json({ error: 'Failed to fetch characters' });
@@ -149,7 +150,7 @@ router.get('/:id/locations', async (req: Request, res: Response) => {
        WHERE bl.book_id = $1 ORDER BY l.name ASC`,
       [id]
     );
-    res.json({ locations: result.rows });
+    res.json({ locations: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching locations:', error);
     res.status(500).json({ error: 'Failed to fetch locations' });
@@ -166,7 +167,7 @@ router.get('/:id/items', async (req: Request, res: Response) => {
        WHERE bi.book_id = $1 ORDER BY i.name ASC`,
       [id]
     );
-    res.json({ items: result.rows });
+    res.json({ items: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching items:', error);
     res.status(500).json({ error: 'Failed to fetch items' });
@@ -181,7 +182,7 @@ router.get('/:id/art', async (req: Request, res: Response) => {
       'SELECT * FROM art WHERE book_id = $1 ORDER BY order_index ASC',
       [id]
     );
-    res.json({ art: result.rows });
+    res.json({ art: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching art:', error);
     res.status(500).json({ error: 'Failed to fetch art' });

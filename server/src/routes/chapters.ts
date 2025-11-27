@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { query } from '../db';
 import { adminOnly } from '../middleware/auth';
+import { toCamelCase, rowsToCamelCase } from '../utils/caseConverter';
 
 const router = Router();
 
@@ -15,7 +16,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       return;
     }
     
-    res.json({ chapter: result.rows[0] });
+    res.json({ chapter: toCamelCase(result.rows[0]) });
   } catch (error) {
     console.error('Error fetching chapter:', error);
     res.status(500).json({ error: 'Failed to fetch chapter' });
@@ -39,7 +40,7 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
       [bookId, title, chapterNumber, summary || null]
     );
     
-    res.status(201).json({ chapter: result.rows[0], message: 'Chapter created successfully' });
+    res.status(201).json({ chapter: toCamelCase(result.rows[0]), message: 'Chapter created successfully' });
   } catch (error) {
     console.error('Error creating chapter:', error);
     res.status(500).json({ error: 'Failed to create chapter' });
@@ -68,7 +69,7 @@ router.put('/:id', adminOnly, async (req: Request, res: Response) => {
       return;
     }
     
-    res.json({ chapter: result.rows[0], message: 'Chapter updated successfully' });
+    res.json({ chapter: toCamelCase(result.rows[0]), message: 'Chapter updated successfully' });
   } catch (error) {
     console.error('Error updating chapter:', error);
     res.status(500).json({ error: 'Failed to update chapter' });
@@ -102,7 +103,7 @@ router.get('/:id/art', async (req: Request, res: Response) => {
       'SELECT * FROM art WHERE chapter_id = $1 ORDER BY order_index ASC',
       [id]
     );
-    res.json({ art: result.rows });
+    res.json({ art: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching art:', error);
     res.status(500).json({ error: 'Failed to fetch art' });
