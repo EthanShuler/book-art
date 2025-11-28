@@ -1,7 +1,6 @@
 import { Link } from "react-router";
-import { BookOpen, ArrowRight, Plus } from "lucide-react";
+import { BookOpen, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/lib/auth";
 
 export function meta() {
   return [
@@ -11,33 +10,10 @@ export function meta() {
 }
 
 export default function Home() {
-  const { isAdmin } = useAuth();
+  
 
   return (
     <div className="flex flex-col">
-      {/* Admin Actions */}
-      {isAdmin && (
-        <section className="bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center gap-4 flex-wrap">
-              <span className="text-sm font-medium text-amber-800 dark:text-amber-200">Admin:</span>
-              <Button asChild size="sm" variant="outline">
-                <Link to="/admin/series/new">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Series
-                </Link>
-              </Button>
-              <Button asChild size="sm" variant="outline">
-                <Link to="/admin/books/new">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Book
-                </Link>
-              </Button>
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Hero Section */}
       <section className="relative py-20 md:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-secondary/5" />

@@ -13,9 +13,12 @@ Content-Type: application/json
 ### Get token
 @token = {{postLogin.response.body.token}}
 
+### Get All Characters
+GET {{baseUrl}}/characters
+
 ### Get Character by ID
 # Replace with actual UUID after creating a character
-GET {{baseUrl}}/characters/{{characterId}}
+GET {{baseUrl}}/characters/d30f9015-9496-4e50-a21a-cba7edfa9d75
 
 ### Get books a character appears in
 GET {{baseUrl}}/characters/{{characterId}}/books

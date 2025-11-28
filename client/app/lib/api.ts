@@ -41,6 +41,16 @@ export const booksApi = {
   getItems: (bookId: string) => fetchApi<{ items: Item[] }>(`/books/${bookId}/items`),
 };
 
+// Series API
+export const seriesApi = {
+  getAll: () => fetchApi<{ series: Series[] }>('/series'),
+  getById: (id: string) => fetchApi<{ series: Series }>(`/series/${id}`),
+  getBooks: (seriesId: string) => fetchApi<{ books: Book[] }>(`/series/${seriesId}/books`),
+  getCharacters: (seriesId: string) => fetchApi<{ characters: Character[] }>(`/series/${seriesId}/characters`),
+  getLocations: (seriesId: string) => fetchApi<{ locations: Location[] }>(`/series/${seriesId}/locations`),
+  getItems: (seriesId: string) => fetchApi<{ items: Item[] }>(`/series/${seriesId}/items`),
+};
+
 // Chapters API
 export const chaptersApi = {
   getById: (id: string) => fetchApi<{ chapter: Chapter }>(`/chapters/${id}`),
@@ -98,6 +108,16 @@ export const authApi = {
 };
 
 // Types
+export interface Series {
+  id: string;
+  title: string;
+  author: string | null;
+  description: string | null;
+  coverImageUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface Book {
   id: string;
   title: string;

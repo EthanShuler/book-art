@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { query } from '../db';
 import { adminOnly } from '../middleware/auth';
+import { toCamelCase, rowsToCamelCase } from '../utils/caseConverter';
 
 const router = Router();
 
@@ -10,7 +11,7 @@ router.get('/', async (req: Request, res: Response) => {
     const result = await query(
       'SELECT * FROM series ORDER BY title ASC'
     );
-    res.json(result.rows);
+    res.json({ series: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching series:', error);
     res.status(500).json({ error: 'Failed to fetch series' });
@@ -31,7 +32,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       return;
     }
 
-    res.json(result.rows[0]);
+    res.json({ series: toCamelCase(result.rows[0]) });
   } catch (error) {
     console.error('Error fetching series:', error);
     res.status(500).json({ error: 'Failed to fetch series' });
@@ -46,7 +47,7 @@ router.get('/:id/books', async (req: Request, res: Response) => {
       'SELECT * FROM books WHERE series_id = $1 ORDER BY title ASC',
       [id]
     );
-    res.json(result.rows);
+    res.json({ books: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching books for series:', error);
     res.status(500).json({ error: 'Failed to fetch books for series' });
@@ -61,7 +62,7 @@ router.get('/:id/characters', async (req: Request, res: Response) => {
       'SELECT * FROM characters WHERE series_id = $1 ORDER BY name ASC',
       [id]
     );
-    res.json(result.rows);
+    res.json({ characters: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching characters for series:', error);
     res.status(500).json({ error: 'Failed to fetch characters for series' });
@@ -76,7 +77,7 @@ router.get('/:id/locations', async (req: Request, res: Response) => {
       'SELECT * FROM locations WHERE series_id = $1 ORDER BY name ASC',
       [id]
     );
-    res.json(result.rows);
+    res.json({ locations: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching locations for series:', error);
     res.status(500).json({ error: 'Failed to fetch locations for series' });
@@ -91,7 +92,7 @@ router.get('/:id/items', async (req: Request, res: Response) => {
       'SELECT * FROM items WHERE series_id = $1 ORDER BY name ASC',
       [id]
     );
-    res.json(result.rows);
+    res.json({ items: rowsToCamelCase(result.rows) });
   } catch (error) {
     console.error('Error fetching items for series:', error);
     res.status(500).json({ error: 'Failed to fetch items for series' });

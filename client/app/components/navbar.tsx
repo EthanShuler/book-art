@@ -3,14 +3,18 @@ import { BookOpen, Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useAuth, logout } from "@/lib/auth";
+import { Plus } from 'lucide-react';
 
 export function Navbar() {
+  const { isAdmin } = useAuth();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const navLinks = [
     { href: "/", label: "Home" },
+    { href: "/series", label: "Series" },
     { href: "/books", label: "Books" },
   ];
 
@@ -23,6 +27,30 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+      {isAdmin && (
+        <section className="bg-amber-50 dark:bg-amber-950/20 border-b border-amber-200 dark:border-amber-800">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center gap-4 flex-wrap">
+              <span className="text-sm font-medium text-amber-800 dark:text-amber-200">Admin:</span>
+              <Button asChild size="sm" variant="outline">
+                <Link to="/admin/series/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Series
+                </Link>
+              </Button>
+              <Button asChild size="sm" variant="outline">
+                <Link to="/admin/books/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Book
+                </Link>
+              </Button>
+              <Button size="sm" variant="outline" onClick={logout}>
+                Logout
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
