@@ -11,4 +11,9 @@ export default [
     route("items/:itemId", "routes/items.$itemId.tsx"),
     route("search", "routes/search.tsx"),
   ]),
+  // Admin routes (not linked in UI)
+  route("admin/login", "routes/admin.login.tsx"),
+  route("admin/series/new", "routes/admin.series.new.tsx"),
+  route("admin/books/new", "routes/admin.books.new.tsx"),
+  route("admin/books/:bookId/chapters/new", "routes/admin.books.$bookId.chapters.new.tsx"),
 ] satisfies RouteConfig;

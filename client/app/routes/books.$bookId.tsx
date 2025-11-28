@@ -4,7 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen, Users, MapPin, Package } from "lucide-react";
+import { ArrowLeft, BookOpen, Users, MapPin, Package, Plus } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 import type { Route } from "./+types/books.$bookId";
 
 export function meta({ data }: Route.MetaArgs) {
@@ -50,6 +51,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export default function BookDetail() {
   const { book, chapters, characters, locations, items, error } = useLoaderData<typeof loader>();
+  const { isAdmin } = useAuth();
 
   if (error || !book) {
     return (
@@ -129,7 +131,7 @@ export default function BookDetail() {
         </TabsList>
 
         <TabsContent value="chapters">
-          <ChaptersList chapters={chapters} bookId={book.id} />
+          <ChaptersList chapters={chapters} bookId={book.id} isAdmin={isAdmin} />
         </TabsContent>
 
         <TabsContent value="characters">
@@ -148,36 +150,44 @@ export default function BookDetail() {
   );
 }
 
-function ChaptersList({ chapters, bookId }: { chapters: Chapter[]; bookId: string }) {
-  if (chapters.length === 0) {
-    return <EmptyState message="No chapters available yet." />;
-  }
-
+function ChaptersList({ chapters, bookId, isAdmin }: { chapters: Chapter[]; bookId: string; isAdmin: boolean }) {
   return (
     <div className="space-y-3">
-      {chapters
-        .sort((a, b) => a.chapterNumber - b.chapterNumber)
-        .map((chapter) => (
-          <Link key={chapter.id} to={`/chapters/${chapter.id}`}>
-            <Card className="hover:bg-muted/50 transition-colors">
-              <CardHeader className="py-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-lg">
-                      Chapter {chapter.chapterNumber}: {chapter.title}
-                    </CardTitle>
-                    {chapter.summary && (
-                      <CardDescription className="mt-1 line-clamp-2">
-                        {chapter.summary}
-                      </CardDescription>
-                    )}
-                  </div>
-                  <Badge variant="outline">View Art</Badge>
-                </div>
-              </CardHeader>
-            </Card>
+      {isAdmin && (
+        <Button asChild variant="outline" className="mb-4">
+          <Link to={`/admin/books/${bookId}/chapters/new`}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Chapter
           </Link>
-        ))}
+        </Button>
+      )}
+      {chapters.length === 0 ? (
+        <EmptyState message="No chapters available yet." />
+      ) : (
+        chapters
+          .sort((a, b) => a.chapterNumber - b.chapterNumber)
+          .map((chapter) => (
+            <Link key={chapter.id} to={`/chapters/${chapter.id}`}>
+              <Card className="hover:bg-muted/50 transition-colors">
+                <CardHeader className="py-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-lg">
+                        Chapter {chapter.chapterNumber}: {chapter.title}
+                      </CardTitle>
+                      {chapter.summary && (
+                        <CardDescription className="mt-1 line-clamp-2">
+                          {chapter.summary}
+                        </CardDescription>
+                      )}
+                    </div>
+                    <Badge variant="outline">View Art</Badge>
+                  </div>
+                </CardHeader>
+              </Card>
+            </Link>
+          ))
+      )}
     </div>
   );
 }
