@@ -32,7 +32,6 @@ export async function loader({ params }: Route.LoaderArgs) {
       const chaptersData = await booksApi.getChapters(String(chapterData.chapter.bookId));
       allChapters = chaptersData.chapters;
     }
-    
     return {
       chapter: chapterData.chapter,
       art: artData.art,
@@ -189,7 +188,7 @@ function ArtPiece({ art, index }: { art: Art; index: number }) {
         </div>
         
         {/* Tagged entities */}
-        {(art.characters?.length || art.locations?.length || art.items?.length) && (
+        {(art?.characters || art?.locations || art?.items) && (
           <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
             {art.characters?.map((char) => (
               <Link key={char.id} to={`/characters/${char.id}`}>

@@ -100,11 +100,45 @@ router.delete('/:id', adminOnly, async (req: Request, res: Response) => {
 router.get('/:id/art', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const result = await query(
+    const artResult = await query(
       'SELECT * FROM art WHERE chapter_id = $1 ORDER BY order_index ASC',
       [id]
     );
-    res.json({ art: rowsToCamelCase(result.rows) });
+    
+    // For each art piece, fetch associated characters, locations, and items
+    const artWithRelations = await Promise.all(
+      artResult.rows.map(async (art) => {
+        const [charactersResult, locationsResult, itemsResult] = await Promise.all([
+          query(
+            `SELECT c.* FROM characters c
+             JOIN art_characters ac ON c.id = ac.character_id
+             WHERE ac.art_id = $1`,
+            [art.id]
+          ),
+          query(
+            `SELECT l.* FROM locations l
+             JOIN art_locations al ON l.id = al.location_id
+             WHERE al.art_id = $1`,
+            [art.id]
+          ),
+          query(
+            `SELECT i.* FROM items i
+             JOIN art_items ai ON i.id = ai.item_id
+             WHERE ai.art_id = $1`,
+            [art.id]
+          ),
+        ]);
+        
+        return {
+          ...toCamelCase(art) as Record<string, unknown>,
+          characters: rowsToCamelCase(charactersResult.rows),
+          locations: rowsToCamelCase(locationsResult.rows),
+          items: rowsToCamelCase(itemsResult.rows),
+        };
+      })
+    );
+    
+    res.json({ art: artWithRelations });
   } catch (error) {
     console.error('Error fetching art:', error);
     res.status(500).json({ error: 'Failed to fetch art' });

@@ -60,7 +60,7 @@ function SeriesCard({ series }: { series: Series }) {
   return (
     <Link to={`/series/${series.id}`}>
       <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden group">
-        <div className="aspect-[2/3] relative bg-muted overflow-hidden">
+        <div className="aspect-2/3 relative bg-muted overflow-hidden">
           {series.coverImageUrl ? (
             <img
               src={series.coverImageUrl}
@@ -69,7 +69,7 @@ function SeriesCard({ series }: { series: Series }) {
               loading="lazy"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-secondary/20">
+            <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary/20 to-secondary/20">
               <span className="text-6xl">📚</span>
             </div>
           )}
