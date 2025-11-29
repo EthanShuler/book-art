@@ -42,14 +42,14 @@ router.get('/:id/books', async (req: Request, res: Response) => {
 // POST /api/items (admin only)
 router.post('/', adminOnly, async (req: Request, res: Response) => {
   try {
-    const { seriesId, name, description, imageUrl, bookIds } = req.body;
+    const { seriesId, name, description, imageUrl, bookIds, data } = req.body;
     
     // Insert item
     const result = await query(
-      `INSERT INTO items (series_id, name, description, image_url)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO items (series_id, name, description, image_url, data)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [seriesId, name, description, imageUrl]
+      [seriesId, name, description, imageUrl, data ? JSON.stringify(data) : '{}']
     );
     const item = result.rows[0];
 
@@ -65,7 +65,7 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
       );
     }
 
-    res.status(201).json(item);
+    res.status(201).json({ item });
   } catch (error) {
     res.status(500).json({ error: 'Failed to create item' });
   }
@@ -75,16 +75,17 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
 router.put('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { name, description, imageUrl, bookIds } = req.body;
+    const { name, description, imageUrl, bookIds, data } = req.body;
     const result = await query(
       `UPDATE items
        SET name = COALESCE($1, name),
            description = COALESCE($2, description),
            image_url = COALESCE($3, image_url),
+           data = COALESCE($4, data),
            updated_at = NOW()
-       WHERE id = $4
+       WHERE id = $5
        RETURNING *`,
-      [name, description, imageUrl, id]
+      [name, description, imageUrl, data ? JSON.stringify(data) : null, id]
     );
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Item not found' });
@@ -109,7 +110,7 @@ router.put('/:id', adminOnly, async (req: Request, res: Response) => {
       }
     }
 
-    res.json(result.rows[0]);
+    res.json({ item: result.rows[0] });
   } catch (error) {
     res.status(500).json({ error: 'Failed to update item' });
   }

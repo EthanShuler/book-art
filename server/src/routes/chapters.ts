@@ -26,7 +26,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST /api/chapters (admin only)
 router.post('/', adminOnly, async (req: Request, res: Response) => {
   try {
-    const { bookId, title, chapterNumber, summary } = req.body;
+    const { bookId, title, chapterNumber, summary, data } = req.body;
     
     if (!bookId || !title || chapterNumber === undefined) {
       res.status(400).json({ error: 'bookId, title, and chapterNumber are required' });
@@ -34,10 +34,10 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
     }
     
     const result = await query(
-      `INSERT INTO chapters (book_id, title, chapter_number, summary)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO chapters (book_id, title, chapter_number, summary, data)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [bookId, title, chapterNumber, summary || null]
+      [bookId, title, chapterNumber, summary || null, data ? JSON.stringify(data) : '{}']
     );
     
     res.status(201).json({ chapter: toCamelCase(result.rows[0]), message: 'Chapter created successfully' });
@@ -51,17 +51,18 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
 router.put('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, chapterNumber, summary } = req.body;
+    const { title, chapterNumber, summary, data } = req.body;
     
     const result = await query(
       `UPDATE chapters 
        SET title = COALESCE($1, title),
            chapter_number = COALESCE($2, chapter_number),
            summary = COALESCE($3, summary),
+           data = COALESCE($4, data),
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $4
+       WHERE id = $5
        RETURNING *`,
-      [title, chapterNumber, summary, id]
+      [title, chapterNumber, summary, data ? JSON.stringify(data) : null, id]
     );
     
     if (result.rows.length === 0) {

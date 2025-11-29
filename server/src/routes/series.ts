@@ -102,7 +102,7 @@ router.get('/:id/items', async (req: Request, res: Response) => {
 // POST /api/series - Create a new series (admin only)
 router.post('/', adminOnly, async (req: Request, res: Response) => {
   try {
-    const { title, description, cover_image_url, author } = req.body;
+    const { title, description, cover_image_url, author, data } = req.body;
 
     if (!title) {
       res.status(400).json({ error: 'Title is required' });
@@ -110,13 +110,13 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
     }
 
     const result = await query(
-      `INSERT INTO series (title, description, cover_image_url, author)
-       VALUES ($1, $2, $3, $4)
+      `INSERT INTO series (title, description, cover_image_url, author, data)
+       VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [title, description || null, cover_image_url || null, author || null]
+      [title, description || null, cover_image_url || null, author || null, data ? JSON.stringify(data) : '{}']
     );
 
-    res.status(201).json(result.rows[0]);
+    res.status(201).json({ series: toCamelCase(result.rows[0]) });
   } catch (error) {
     console.error('Error creating series:', error);
     res.status(500).json({ error: 'Failed to create series' });
@@ -127,7 +127,7 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
 router.put('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, description, cover_image_url, author } = req.body;
+    const { title, description, cover_image_url, author, data } = req.body;
 
     if (!title) {
       res.status(400).json({ error: 'Title is required' });
@@ -136,10 +136,10 @@ router.put('/:id', adminOnly, async (req: Request, res: Response) => {
 
     const result = await query(
       `UPDATE series
-       SET title = $1, description = $2, cover_image_url = $3, author = $4, updated_at = NOW()
-       WHERE id = $5
+       SET title = $1, description = $2, cover_image_url = $3, author = $4, data = COALESCE($5, data), updated_at = NOW()
+       WHERE id = $6
        RETURNING *`,
-      [title, description || null, cover_image_url || null, author || null, id]
+      [title, description || null, cover_image_url || null, author || null, data ? JSON.stringify(data) : null, id]
     );
 
     if (result.rows.length === 0) {
@@ -147,7 +147,7 @@ router.put('/:id', adminOnly, async (req: Request, res: Response) => {
       return;
     }
 
-    res.json(result.rows[0]);
+    res.json({ series: toCamelCase(result.rows[0]) });
   } catch (error) {
     console.error('Error updating series:', error);
     res.status(500).json({ error: 'Failed to update series' });

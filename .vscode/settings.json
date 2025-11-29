@@ -1,0 +1,9 @@
+{
+  "jest.rootPath": "server",
+  "jest.jestCommandLine": "npm test --",
+  "jest.nodeEnv": {
+    "JWT_SECRET": "test-secret-key",
+    "NODE_ENV": "test"
+  },
+  "jest.runMode": "on-demand"
+}

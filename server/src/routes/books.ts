@@ -37,7 +37,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST /api/books (admin only)
 router.post('/', adminOnly, async (req: Request, res: Response) => {
   try {
-    const { title, author, description, coverImageUrl, seriesId } = req.body;
+    const { title, author, description, coverImageUrl, seriesId, data } = req.body;
     
     if (!title) {
       res.status(400).json({ error: 'Title is required' });
@@ -45,10 +45,10 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
     }
     
     const result = await query(
-      `INSERT INTO books (title, author, description, cover_image_url, series_id)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO books (title, author, description, cover_image_url, series_id, data)
+       VALUES ($1, $2, $3, $4, $5, $6)
        RETURNING *`,
-      [title, author || null, description || null, coverImageUrl || null, seriesId || null]
+      [title, author || null, description || null, coverImageUrl || null, seriesId || null, data ? JSON.stringify(data) : '{}']
     );
     
     res.status(201).json({ book: toCamelCase(result.rows[0]), message: 'Book created successfully' });
@@ -62,7 +62,7 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
 router.put('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, author, description, coverImageUrl, seriesId } = req.body;
+    const { title, author, description, coverImageUrl, seriesId, data } = req.body;
     
     const result = await query(
       `UPDATE books 
@@ -71,10 +71,11 @@ router.put('/:id', adminOnly, async (req: Request, res: Response) => {
            description = COALESCE($3, description),
            cover_image_url = COALESCE($4, cover_image_url),
            series_id = COALESCE($5, series_id),
+           data = COALESCE($6, data),
            updated_at = CURRENT_TIMESTAMP
-       WHERE id = $6
+       WHERE id = $7
        RETURNING *`,
-      [title, author, description, coverImageUrl, seriesId, id]
+      [title, author, description, coverImageUrl, seriesId, data ? JSON.stringify(data) : null, id]
     );
     
     if (result.rows.length === 0) {
