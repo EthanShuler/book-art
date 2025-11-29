@@ -1,9 +1,7 @@
 import { Link, useLoaderData } from "react-router";
 import { seriesApi, type Series } from "@/lib/api";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { BookOpen } from "lucide-react";
-import type { Route } from "./+types/series._index";
 
 export function meta() {
   return [

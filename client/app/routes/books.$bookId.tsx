@@ -1,11 +1,12 @@
-import { Link, useLoaderData, useParams } from "react-router";
+import { useState } from 'react';
+import { Link, useLoaderData, useNavigate } from "react-router";
 import { booksApi, type Book, type Chapter, type Character, type Location, type Item } from "@/lib/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, BookOpen, Users, MapPin, Package, Plus } from "lucide-react";
-import { useAuth } from "@/lib/auth";
+import { useAuth, getAuthToken } from "@/lib/auth";
 import type { Route } from "./+types/books.$bookId";
 
 export function meta({ data }: Route.MetaArgs) {
@@ -52,6 +53,25 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function BookDetail() {
   const { book, chapters, characters, locations, items, error } = useLoaderData<typeof loader>();
   const { isAdmin } = useAuth();
+  const token = getAuthToken() || "";
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this book? This action cannot be undone.")) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await booksApi.delete({ id: book!.id }, token);
+      navigate("/books");
+    } catch (err) {
+      console.error("Failed to delete book:", err);
+      alert(err instanceof Error ? err.message : "Failed to delete book");
+      setIsDeleting(false);
+    }
+  };
 
   if (error || !book) {
     return (
@@ -97,6 +117,16 @@ export default function BookDetail() {
           </div>
         </div>
         <div className="flex-1">
+          {isAdmin && (
+            <Button 
+              onClick={handleDelete} 
+              variant="destructive" 
+              className="mb-4 float-right"
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete Book"}
+            </Button>
+          )}
           <h1 className="text-3xl md:text-4xl font-bold mb-2">{book.title}</h1>
           <p className="text-xl text-muted-foreground mb-4">by {book.author || "Unknown Author"}</p>
           <p className="text-muted-foreground mb-6">{book.description || "No description available."}</p>

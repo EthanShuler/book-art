@@ -39,6 +39,17 @@ export const booksApi = {
   getCharacters: (bookId: string) => fetchApi<{ characters: Character[] }>(`/books/${bookId}/characters`),
   getLocations: (bookId: string) => fetchApi<{ locations: Location[] }>(`/books/${bookId}/locations`),
   getItems: (bookId: string) => fetchApi<{ items: Item[] }>(`/books/${bookId}/items`),
+  create: (data: { seriesId: string; title: string; description?: string; coverImageUrl?: string }, token: string) =>
+    fetchApi<{ book: Book; message: string }>('/books', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    }),
+  delete: (data: { id: string }, token: string) =>
+    fetchApi<{ message: string }>(`/books/${data.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    }),
 };
 
 // Series API
@@ -49,6 +60,17 @@ export const seriesApi = {
   getCharacters: (seriesId: string) => fetchApi<{ characters: Character[] }>(`/series/${seriesId}/characters`),
   getLocations: (seriesId: string) => fetchApi<{ locations: Location[] }>(`/series/${seriesId}/locations`),
   getItems: (seriesId: string) => fetchApi<{ items: Item[] }>(`/series/${seriesId}/items`),
+  create: (data: { title: string; description?: string; coverImageUrl?: string }, token: string) =>
+    fetchApi<{ series: Series; message: string }>('/series', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    }),
+  delete: (data: { id: string }, token: string) =>
+    fetchApi<{ message: string }>(`/series/${data.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    }),
 };
 
 // Chapters API

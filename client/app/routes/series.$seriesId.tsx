@@ -1,11 +1,12 @@
-import { Link, useLoaderData } from "react-router";
+import { useState } from "react";
+import { Link, useLoaderData, useNavigate } from "react-router";
 import { seriesApi, type Series, type Book, type Character, type Location, type Item } from "@/lib/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, BookOpen, Users, MapPin, Package, Plus } from "lucide-react";
-import { useAuth } from "@/lib/auth";
+import { useAuth, getAuthToken } from "@/lib/auth";
 import type { Route } from "./+types/series.$seriesId";
 
 export function meta({ data }: Route.MetaArgs) {
@@ -18,7 +19,7 @@ export function meta({ data }: Route.MetaArgs) {
 
 export async function loader({ params }: Route.LoaderArgs) {
   const seriesId = params.seriesId;
-  
+
   try {
     const [seriesData, booksData, charactersData, locationsData, itemsData] = await Promise.all([
       seriesApi.getById(seriesId),
@@ -27,7 +28,7 @@ export async function loader({ params }: Route.LoaderArgs) {
       seriesApi.getLocations(seriesId),
       seriesApi.getItems(seriesId),
     ]);
-    
+
     return {
       series: seriesData.series,
       books: booksData.books,
@@ -52,6 +53,25 @@ export async function loader({ params }: Route.LoaderArgs) {
 export default function SeriesDetail() {
   const { series, books, characters, locations, items, error } = useLoaderData<typeof loader>();
   const { isAdmin } = useAuth();
+  const token = getAuthToken() || "";
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this series? This action cannot be undone.")) {
+      return;
+    }
+
+    setIsDeleting(true);
+    try {
+      await seriesApi.delete({ id: series!.id }, token);
+      navigate("/series");
+    } catch (err) {
+      console.error("Failed to delete series:", err);
+      alert(err instanceof Error ? err.message : "Failed to delete series");
+      setIsDeleting(false);
+    }
+  };
 
   if (error || !series) {
     return (
@@ -97,6 +117,16 @@ export default function SeriesDetail() {
           </div>
         </div>
         <div className="flex-1">
+          {isAdmin && (
+            <Button 
+              onClick={handleDelete} 
+              variant="destructive" 
+              className="mb-4 float-right"
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete Series"}
+            </Button>
+          )}
           <h1 className="text-3xl md:text-4xl font-bold mb-2">{series.title}</h1>
           {series.author && (
             <p className="text-xl text-muted-foreground mb-4">by {series.author}</p>
