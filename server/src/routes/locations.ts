@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { query } from '../db';
 import { adminOnly } from '../middleware/auth';
+import { rowsToCamelCase } from '../utils/caseConverter';
 
 const router = Router();
 
@@ -175,7 +176,7 @@ router.get('/:id/art', async (req: Request, res: Response) => {
        ORDER BY a.created_at DESC`,
       [id]
     );
-    res.json({ art: result.rows });
+    res.json({ art: rowsToCamelCase(result.rows) });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch art' });
   }

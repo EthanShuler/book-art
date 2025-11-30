@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, ChevronLeft, ChevronRight, Image } from "lucide-react";
 import { ArtPiece } from "@/components/art-piece";
 import type { Route } from "./+types/chapters.$chapterId";
+import { ArtGrid } from '@/components/art-grid';
 
 export function meta({ data }: Route.MetaArgs) {
   const chapter = data?.chapter;
@@ -126,11 +127,12 @@ export default function ChapterDetail() {
         </div>
       ) : (
         <div className="space-y-8">
-          {art
+          <ArtGrid art={art} emptyMessage={`No artwork for this chapter yet.`}/>
+          {/* {art
             .sort((a, b) => a.orderIndex - b.orderIndex)
             .map((piece, index) => (
               <ArtPiece key={piece.id} art={piece} index={index + 1} />
-            ))}
+            ))} */}
         </div>
       )}
 
