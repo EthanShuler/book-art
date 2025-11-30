@@ -50,6 +50,12 @@ export const booksApi = {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     }),
+  update: (data: { id: string; title: string; description?: string; coverImageUrl?: string }, token: string) =>
+    fetchApi<{ book: Book; message: string }>('/books', {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    }),
 };
 
 // Series API
@@ -70,6 +76,12 @@ export const seriesApi = {
     fetchApi<{ message: string }>(`/series/${data.id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
+    }),
+  update: (data: { id: string; title: string; description?: string; coverImageUrl?: string }, token: string) =>
+    fetchApi<{ series: Series; message: string }>('/series', {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
     }),
 };
 

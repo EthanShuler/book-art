@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { getAuthToken } from "@/lib/auth";
-import { booksApi } from '@/lib/api';
+import { booksApi, seriesApi, type Series } from '@/lib/api';
 
 export function meta() {
   return [{ title: "Create Book - Admin" }];
@@ -15,6 +15,20 @@ export default function AdminBooksNew() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [seriesList, setSeriesList] = useState<Series[]>([]);
+
+  useEffect(() => {
+    async function fetchSeries() {
+      try {
+        const series = await seriesApi.getAll();
+        setSeriesList(series.series);
+      } catch (error) {
+        console.error("Failed to fetch series:", error);
+      }
+    }
+
+    fetchSeries();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -93,10 +107,11 @@ export default function AdminBooksNew() {
                 disabled={isSubmitting}
               >
                 <option value="">Select a series...</option>
-                {/* TODO: Load series from API */}
-                <option value="44a109f2-c9c3-486d-9ae1-04f840da6bfa">The Lord of the Rings</option>
-                <option value="series-2">Harry Potter</option>
-                <option value="series-3">A Song of Ice and Fire</option>
+                {seriesList.map((series) => (
+                  <option key={series.id} value={series.id}>
+                    {series.title}
+                  </option>
+                ))}
               </select>
             </div>
 
