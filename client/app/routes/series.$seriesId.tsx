@@ -121,14 +121,22 @@ export default function SeriesDetail() {
         </div>
         <div className="flex-1">
           {isAdmin && (
-            <Button 
-              onClick={handleDelete} 
-              variant="destructive" 
-              className="mb-4 float-right"
-              disabled={isDeleting}
+            <div className='mb-4 float-right flex gap-2'>
+              <Button
+              onClick={() => navigate(`/admin/series/${series.id}/edit`)}
+              variant="outline"
             >
-              {isDeleting ? "Deleting..." : "Delete Series"}
-            </Button>
+              Edit Series
+              </Button>
+              <Button 
+                onClick={handleDelete} 
+                variant="destructive" 
+                className="mb-4 float-right"
+                disabled={isDeleting}
+              >
+                {isDeleting ? "Deleting..." : "Delete Series"}
+              </Button>
+            </div>
           )}
           <h1 className="text-3xl md:text-4xl font-bold mb-2">{series.title}</h1>
           {series.author && (

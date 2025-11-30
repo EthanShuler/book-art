@@ -102,7 +102,7 @@ router.get('/:id/items', async (req: Request, res: Response) => {
 // POST /api/series - Create a new series (admin only)
 router.post('/', adminOnly, async (req: Request, res: Response) => {
   try {
-    const { title, description, cover_image_url, author, data } = req.body;
+    const { title, description, coverImageUrl, author, data } = req.body;
 
     if (!title) {
       res.status(400).json({ error: 'Title is required' });
@@ -113,7 +113,7 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
       `INSERT INTO series (title, description, cover_image_url, author, data)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING *`,
-      [title, description || null, cover_image_url || null, author || null, data ? JSON.stringify(data) : '{}']
+      [title, description || null, coverImageUrl || null, author || null, data ? JSON.stringify(data) : '{}']
     );
 
     res.status(201).json({ series: toCamelCase(result.rows[0]) });
@@ -127,7 +127,7 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
 router.put('/:id', adminOnly, async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { title, description, cover_image_url, author, data } = req.body;
+    const { title, description, coverImageUrl, author, data } = req.body;
 
     if (!title) {
       res.status(400).json({ error: 'Title is required' });
@@ -139,7 +139,7 @@ router.put('/:id', adminOnly, async (req: Request, res: Response) => {
        SET title = $1, description = $2, cover_image_url = $3, author = $4, data = COALESCE($5, data), updated_at = NOW()
        WHERE id = $6
        RETURNING *`,
-      [title, description || null, cover_image_url || null, author || null, data ? JSON.stringify(data) : null, id]
+      [title, description || null, coverImageUrl || null, author || null, data ? JSON.stringify(data) : null, id]
     );
 
     if (result.rows.length === 0) {

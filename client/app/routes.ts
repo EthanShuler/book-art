@@ -16,6 +16,7 @@ export default [
   // Admin routes (not linked in UI)
   route("admin/login", "routes/admin.login.tsx"),
   route("admin/series/new", "routes/admin.series.new.tsx"),
+  route("admin/series/:seriesId/edit", "routes/admin.series.$seriesId.edit.tsx"),
   route("admin/books/new", "routes/admin.books.new.tsx"),
   route("admin/books/:bookId/edit", "routes/admin.books.$bookId.edit.tsx"),
   route("admin/books/:bookId/chapters/new", "routes/admin.books.$bookId.chapters.new.tsx"),
