@@ -1,7 +1,7 @@
-import { Link, useLoaderData } from "react-router";
+import { useLoaderData } from "react-router";
 import { seriesApi, type Series } from "@/lib/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen } from "lucide-react";
+import { MediaCard } from "@/components/media-card";
 
 export function meta() {
   return [
@@ -46,46 +46,18 @@ export default function SeriesIndex() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {series.map((s) => (
-            <SeriesCard key={s.id} series={s} />
+            <MediaCard
+              key={s.id}
+              to={`/series/${s.id}`}
+              imageUrl={s.coverImageUrl}
+              title={s.title}
+              subtitle={s.author}
+              description={s.description}
+              showDescription
+            />
           ))}
         </div>
       )}
     </div>
-  );
-}
-
-function SeriesCard({ series }: { series: Series }) {
-  return (
-    <Link to={`/series/${series.id}`}>
-      <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden group">
-        <div className="aspect-2/3 relative bg-muted overflow-hidden">
-          {series.coverImageUrl ? (
-            <img
-              src={series.coverImageUrl}
-              alt={`Cover of ${series.title}`}
-              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-              loading="lazy"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary/20 to-secondary/20">
-              <span className="text-6xl">📚</span>
-            </div>
-          )}
-        </div>
-        <CardHeader className="pb-2">
-          <CardTitle className="line-clamp-1">{series.title}</CardTitle>
-          {series.author && (
-            <CardDescription>by {series.author}</CardDescription>
-          )}
-        </CardHeader>
-        {series.description && (
-          <CardContent className="pt-0">
-            <p className="text-sm text-muted-foreground line-clamp-2">
-              {series.description}
-            </p>
-          </CardContent>
-        )}
-      </Card>
-    </Link>
   );
 }

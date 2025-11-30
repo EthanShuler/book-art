@@ -1,7 +1,9 @@
-import { Link, useLoaderData } from "react-router";
-import { booksApi, type Book } from "@/lib/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLoaderData } from "react-router";
+import { booksApi } from "@/lib/api";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BooksList } from "@/components/books-list";
+import { useAuth } from '@/lib/auth';
 
 export function meta() {
   return [
@@ -21,6 +23,7 @@ export async function loader() {
 }
 
 export default function Books() {
+  const { isAdmin } = useAuth();
   const { books, error } = useLoaderData<typeof loader>();
 
   return (
@@ -38,52 +41,8 @@ export default function Books() {
         </div>
       )}
 
-      {books.length === 0 && !error ? (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">No books available yet.</p>
-          <p className="text-sm text-muted-foreground">Check back soon for new content!</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {books.map((book) => (
-            <BookCard key={book.id} book={book} />
-          ))}
-        </div>
-      )}
+      <BooksList books={books} isAdmin={true} showDescription emptyMessage="No books available yet. Check back soon for new content!" />
     </div>
-  );
-}
-
-function BookCard({ book }: { book: Book }) {
-  return (
-    <Link to={`/books/${book.id}`}>
-      <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden group">
-        <div className="aspect-2/3 relative bg-muted overflow-hidden">
-          {book.coverImageUrl ? (
-            <img
-              src={book.coverImageUrl}
-              alt={`Cover of ${book.title}`}
-              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary/20 to-secondary/20">
-              <span className="text-6xl">📚</span>
-            </div>
-          )}
-        </div>
-        <CardHeader className="pb-2">
-          <CardTitle className="line-clamp-1">{book.title}</CardTitle>
-          <CardDescription className="line-clamp-1">
-            by {book.author || "Unknown Author"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground line-clamp-2">
-            {book.description || "No description available."}
-          </p>
-        </CardContent>
-      </Card>
-    </Link>
   );
 }
 

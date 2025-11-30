@@ -2,15 +2,14 @@ import { useState } from "react";
 import { Link, useLoaderData, useNavigate } from "react-router";
 import { seriesApi, type Series, type Book, type Character, type Location, type Item } from "@/lib/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, BookOpen, Users, MapPin, Package, Plus } from "lucide-react";
+import { ArrowLeft, BookOpen, Users, MapPin, Package } from "lucide-react";
 import { useAuth, getAuthToken } from "@/lib/auth";
 import { CharactersList } from "@/components/characters-list";
 import { LocationsList } from "@/components/locations-list";
 import { ItemsList } from "@/components/items-list";
-import { EmptyState } from "@/components/empty-state";
+import { BooksList } from "@/components/books-list";
 import type { Route } from "./+types/series.$seriesId";
 
 export function meta({ data }: Route.MetaArgs) {
@@ -167,7 +166,7 @@ export default function SeriesDetail() {
         </TabsList>
 
         <TabsContent value="books">
-          <BooksList books={books} seriesId={series.id} isAdmin={isAdmin} />
+          <BooksList books={books} seriesId={series.id} isAdmin={isAdmin} showDescription emptyMessage="No books in this series yet." />
         </TabsContent>
 
         <TabsContent value="characters">
@@ -182,53 +181,6 @@ export default function SeriesDetail() {
           <ItemsList items={items} seriesId={series.id} isAdmin={isAdmin} emptyMessage="No items in this series yet." />
         </TabsContent>
       </Tabs>
-    </div>
-  );
-}
-
-function BooksList({ books, seriesId, isAdmin }: { books: Book[]; seriesId: string; isAdmin: boolean }) {
-  return (
-    <div className="space-y-4">
-      {isAdmin && (
-        <Button asChild variant="outline">
-          <Link to={`/admin/series/${seriesId}/books/new`}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Book
-          </Link>
-        </Button>
-      )}
-      {books.length === 0 ? (
-        <EmptyState message="No books in this series yet." />
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {books.map((book) => (
-            <Link key={book.id} to={`/books/${book.id}`}>
-              <Card className="h-full hover:shadow-lg transition-shadow overflow-hidden group">
-                <div className="aspect-2/3 relative bg-muted overflow-hidden">
-                  {book.coverImageUrl ? (
-                    <img
-                      src={book.coverImageUrl}
-                      alt={`Cover of ${book.title}`}
-                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary/10 to-secondary/10">
-                      <BookOpen className="h-12 w-12 text-muted-foreground" />
-                    </div>
-                  )}
-                </div>
-                <CardHeader className="pb-2">
-                  <CardTitle className="line-clamp-1 text-lg">{book.title}</CardTitle>
-                  {book.author && (
-                    <CardDescription>by {book.author}</CardDescription>
-                  )}
-                </CardHeader>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
