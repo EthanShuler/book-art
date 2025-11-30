@@ -50,8 +50,8 @@ export const booksApi = {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     }),
-  update: (data: { id: string; title: string; description?: string; coverImageUrl?: string }, token: string) =>
-    fetchApi<{ book: Book; message: string }>('/books', {
+  update: (data: { id: string; title?: string; author?: string; description?: string; coverImageUrl?: string }, token: string) =>
+    fetchApi<{ book: Book; message: string }>(`/books/${data.id}`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token}` },
       body: JSON.stringify(data),
@@ -77,8 +77,8 @@ export const seriesApi = {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     }),
-  update: (data: { id: string; title: string; description?: string; coverImageUrl?: string }, token: string) =>
-    fetchApi<{ series: Series; message: string }>('/series', {
+  update: (data: { id: string; title?: string; author?: string; description?: string; coverImageUrl?: string }, token: string) =>
+    fetchApi<{ series: Series; message: string }>(`/series/${data.id}`, {
       method: 'PUT',
       headers: { Authorization: `Bearer ${token}` },
       body: JSON.stringify(data),

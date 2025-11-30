@@ -122,14 +122,21 @@ export default function BookDetail() {
         </div>
         <div className="flex-1">
           {isAdmin && (
+            <div className='mb-4 float-right flex gap-2'>
+              <Button
+              onClick={() => navigate(`/admin/books/${book.id}/edit`)}
+              variant="outline"
+            >
+              Edit Book
+            </Button>
             <Button 
               onClick={handleDelete} 
               variant="destructive" 
-              className="mb-4 float-right"
               disabled={isDeleting}
             >
               {isDeleting ? "Deleting..." : "Delete Book"}
             </Button>
+          </div>
           )}
           <h1 className="text-3xl md:text-4xl font-bold mb-2">{book.title}</h1>
           <p className="text-xl text-muted-foreground mb-4">by {book.author || "Unknown Author"}</p>
