@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { BookForm, type BookFormData } from "@/components/book-form";
 import { getAuthToken } from "@/lib/auth";
-import { booksApi, seriesApi, type Series } from '@/lib/api';
+import { booksApi } from "@/lib/api";
 
 export function meta() {
   return [{ title: "Create Book - Admin" }];
@@ -15,43 +15,10 @@ export default function AdminBooksNew() {
   const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [seriesList, setSeriesList] = useState<Series[]>([]);
 
-  useEffect(() => {
-    async function fetchSeries() {
-      try {
-        const series = await seriesApi.getAll();
-        setSeriesList(series.series);
-      } catch (error) {
-        console.error("Failed to fetch series:", error);
-      }
-    }
-
-    fetchSeries();
-  }, []);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleSubmit = async (data: BookFormData) => {
     setError(null);
     setIsSubmitting(true);
-
-    const formData = new FormData(e.currentTarget);
-    const seriesId = formData.get("seriesId") as string;
-    const title = formData.get("title") as string;
-    const description = formData.get("description") as string;
-    const coverImageUrl = formData.get("coverImageUrl") as string;
-
-    if (!seriesId?.trim()) {
-      setError("Series is required");
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!title?.trim()) {
-      setError("Book name is required");
-      setIsSubmitting(false);
-      return;
-    }
 
     const token = getAuthToken();
     if (!token) {
@@ -61,18 +28,10 @@ export default function AdminBooksNew() {
     }
 
     try {
-      const result = await booksApi.create(
-        {
-          seriesId: seriesId.trim(),
-          title: title.trim(),
-          description: description?.trim() || undefined,
-          coverImageUrl: coverImageUrl?.trim() || undefined,
-        },
-        token
-      );
+      const result = await booksApi.create(data, token);
       navigate(`/books/${result.book.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create Book");
+      setError(err instanceof Error ? err.message : "Failed to create book");
       setIsSubmitting(false);
     }
   };
@@ -94,85 +53,13 @@ export default function AdminBooksNew() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="seriesId" className="text-sm font-medium">
-                Series
-              </label>
-              <select
-                id="seriesId"
-                name="seriesId"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                required
-                disabled={isSubmitting}
-              >
-                <option value="">Select a series...</option>
-                {seriesList.map((series) => (
-                  <option key={series.id} value={series.id}>
-                    {series.title}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="title" className="text-sm font-medium">
-                Book Title
-              </label>
-              <Input
-                id="title"
-                name="title"
-                placeholder="e.g., The Fellowship of the Ring"
-                required
-                disabled={isSubmitting}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="author" className="text-sm font-medium">
-                Author
-              </label>
-              <Input
-                id="author"
-                name="author"
-                placeholder="e.g., J.R.R. Tolkien"
-                disabled={isSubmitting}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="description" className="text-sm font-medium">
-                Description
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                placeholder="A brief description of the book..."
-                disabled={isSubmitting}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="coverImageUrl" className="text-sm font-medium">
-                Cover Image URL
-              </label>
-              <Input
-                id="coverImageUrl"
-                name="coverImageUrl"
-                type="url"
-                placeholder="https://example.com/image.jpg"
-                disabled={isSubmitting}
-              />
-            </div>
-
-            <div className="flex gap-4 pt-4">
-              <Button type="submit" disabled={isSubmitting}>Create Book</Button>
-              <Button type="button" variant="outline" asChild disabled={isSubmitting}>
-                <Link to="/">Cancel</Link>
-              </Button>
-            </div>
-          </form>
+          <BookForm
+            onSubmit={handleSubmit}
+            submitLabel="Create Book"
+            cancelUrl="/"
+            isSubmitting={isSubmitting}
+            error={error}
+          />
         </CardContent>
       </Card>
     </div>

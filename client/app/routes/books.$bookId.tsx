@@ -7,6 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, BookOpen, Users, MapPin, Package, Plus } from "lucide-react";
 import { useAuth, getAuthToken } from "@/lib/auth";
+import { CharactersList } from "@/components/characters-list";
+import { LocationsList } from "@/components/locations-list";
+import { ItemsList } from "@/components/items-list";
+import { EmptyState } from "@/components/empty-state";
 import type { Route } from "./+types/books.$bookId";
 
 export function meta({ data }: Route.MetaArgs) {
@@ -165,15 +169,15 @@ export default function BookDetail() {
         </TabsContent>
 
         <TabsContent value="characters">
-          <CharactersList characters={characters} />
+          <CharactersList characters={characters} emptyMessage="No characters available yet." />
         </TabsContent>
 
         <TabsContent value="locations">
-          <LocationsList locations={locations} />
+          <LocationsList locations={locations} emptyMessage="No locations available yet." />
         </TabsContent>
 
         <TabsContent value="items">
-          <ItemsList items={items} />
+          <ItemsList items={items} emptyMessage="No items available yet." />
         </TabsContent>
       </Tabs>
     </div>
@@ -218,113 +222,6 @@ function ChaptersList({ chapters, bookId, isAdmin }: { chapters: Chapter[]; book
             </Link>
           ))
       )}
-    </div>
-  );
-}
-
-function CharactersList({ characters }: { characters: Character[] }) {
-  if (characters.length === 0) {
-    return <EmptyState message="No characters available yet." />;
-  }
-
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      {characters.map((character) => (
-        <Link key={character.id} to={`/characters/${character.id}`}>
-          <Card className="hover:shadow-lg transition-shadow overflow-hidden group">
-            <div className="aspect-square relative bg-muted overflow-hidden">
-              {character.imageUrl ? (
-                <img
-                  src={character.imageUrl}
-                  alt={character.name}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary/10 to-secondary/10">
-                  <Users className="h-12 w-12 text-muted-foreground" />
-                </div>
-              )}
-            </div>
-            <CardContent className="p-3">
-              <p className="font-medium text-sm text-center truncate">{character.name}</p>
-            </CardContent>
-          </Card>
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-function LocationsList({ locations }: { locations: Location[] }) {
-  if (locations.length === 0) {
-    return <EmptyState message="No locations available yet." />;
-  }
-
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-      {locations.map((location) => (
-        <Link key={location.id} to={`/locations/${location.id}`}>
-          <Card className="hover:shadow-lg transition-shadow overflow-hidden group">
-            <div className="aspect-video relative bg-muted overflow-hidden">
-              {location.imageUrl ? (
-                <img
-                  src={location.imageUrl}
-                  alt={location.name}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary/10 to-secondary/10">
-                  <MapPin className="h-12 w-12 text-muted-foreground" />
-                </div>
-              )}
-            </div>
-            <CardContent className="p-3">
-              <p className="font-medium text-sm text-center truncate">{location.name}</p>
-            </CardContent>
-          </Card>
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-function ItemsList({ items }: { items: Item[] }) {
-  if (items.length === 0) {
-    return <EmptyState message="No items available yet." />;
-  }
-
-  return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      {items.map((item) => (
-        <Link key={item.id} to={`/items/${item.id}`}>
-          <Card className="hover:shadow-lg transition-shadow overflow-hidden group">
-            <div className="aspect-square relative bg-muted overflow-hidden">
-              {item.imageUrl ? (
-                <img
-                  src={item.imageUrl}
-                  alt={item.name}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-linear-to-br from-primary/10 to-secondary/10">
-                  <Package className="h-12 w-12 text-muted-foreground" />
-                </div>
-              )}
-            </div>
-            <CardContent className="p-3">
-              <p className="font-medium text-sm text-center truncate">{item.name}</p>
-            </CardContent>
-          </Card>
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-function EmptyState({ message }: { message: string }) {
-  return (
-    <div className="text-center py-12 bg-muted/30 rounded-lg">
-      <p className="text-muted-foreground">{message}</p>
     </div>
   );
 }
