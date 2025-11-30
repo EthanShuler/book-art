@@ -1,9 +1,9 @@
 import { Link, useLoaderData } from "react-router";
-import { charactersApi, type Character, type Art } from "@/lib/api";
-import { Card, CardContent } from "@/components/ui/card";
+import { charactersApi, type Character } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Image, Users } from "lucide-react";
+import { ArrowLeft, Users } from "lucide-react";
+import { ArtGrid } from "@/components/art-grid";
 import type { Route } from "./+types/characters.$characterId";
 
 export function meta({ data }: Route.MetaArgs) {
@@ -96,35 +96,7 @@ export default function CharacterDetail() {
       {/* Art featuring this character */}
       <div>
         <h2 className="text-2xl font-bold mb-4">Artwork featuring {character.name}</h2>
-        {art.length === 0 ? (
-          <div className="text-center py-12 bg-muted/30 rounded-lg">
-            <Image className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-            <p className="text-muted-foreground">No artwork featuring this character yet.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {art.map((piece: Art) => (
-              <Card key={piece.id} className="overflow-hidden group">
-                <div className="aspect-video relative bg-muted overflow-hidden">
-                  <img
-                    src={piece.imageUrl}
-                    alt={piece.title || "Artwork"}
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                    loading="lazy"
-                  />
-                </div>
-                <CardContent className="p-3">
-                  {piece.title && (
-                    <p className="font-medium truncate">{piece.title}</p>
-                  )}
-                  {piece.artist && (
-                    <p className="text-sm text-muted-foreground">by {piece.artist}</p>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
+        <ArtGrid art={art} emptyMessage={`No artwork featuring this character yet.`} />
       </div>
     </div>
   );
