@@ -1,8 +1,11 @@
-import { Link, useParams } from "react-router";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { chaptersApi } from "@/lib/api";
+import { getAuthToken } from "@/lib/auth";
 import type { Route } from "./+types/admin.books.$bookId.chapters.new";
 
 export function meta() {
@@ -11,6 +14,39 @@ export function meta() {
 
 export default function AdminChaptersNew({ params }: Route.ComponentProps) {
   const { bookId } = params;
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+
+    const token = getAuthToken();
+    if (!token) {
+      setError("You must be logged in to add a chapter");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const formData = new FormData(e.currentTarget);
+    const data = {
+      bookId,
+      title: formData.get("title") as string,
+      chapterNumber: parseInt(formData.get("chapterNumber") as string, 10),
+      summary: (formData.get("summary") as string) || undefined,
+    };
+
+    try {
+      await chaptersApi.create(data, token);
+      navigate(`/books/${bookId}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create chapter");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
@@ -29,13 +65,19 @@ export default function AdminChaptersNew({ params }: Route.ComponentProps) {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="space-y-4">
+          {error && (
+            <div className="mb-4 p-3 bg-destructive/10 text-destructive rounded-md text-sm">
+              {error}
+            </div>
+          )}
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <label htmlFor="chapterNumber" className="text-sm font-medium">
                 Chapter Number
               </label>
               <Input
                 id="chapterNumber"
+                name="chapterNumber"
                 type="number"
                 min="1"
                 placeholder="1"
@@ -49,6 +91,7 @@ export default function AdminChaptersNew({ params }: Route.ComponentProps) {
               </label>
               <Input
                 id="title"
+                name="title"
                 placeholder="e.g., A Long-expected Party"
                 required
               />
@@ -60,13 +103,16 @@ export default function AdminChaptersNew({ params }: Route.ComponentProps) {
               </label>
               <textarea
                 id="summary"
+                name="summary"
                 className="flex min-h-[100px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 placeholder="A brief summary of this chapter..."
               />
             </div>
 
             <div className="flex gap-4 pt-4">
-              <Button type="submit">Add Chapter</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Adding..." : "Add Chapter"}
+              </Button>
               <Button type="button" variant="outline" asChild>
                 <Link to={`/books/${bookId}`}>Cancel</Link>
               </Button>

@@ -89,6 +89,12 @@ export const seriesApi = {
 export const chaptersApi = {
   getById: (id: string) => fetchApi<{ chapter: Chapter }>(`/chapters/${id}`),
   getArt: (chapterId: string) => fetchApi<{ art: Art[] }>(`/chapters/${chapterId}/art`),
+  create: (data: { bookId: string; title: string; chapterNumber: number; summary?: string }, token: string) =>
+    fetchApi<{ chapter: Chapter; message: string }>('/chapters', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    }),
 };
 
 // Characters API
