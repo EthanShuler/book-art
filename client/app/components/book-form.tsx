@@ -36,6 +36,7 @@ export function BookForm({
   error: externalError,
 }: BookFormProps) {
   const [seriesList, setSeriesList] = useState<Series[]>([]);
+  const [selectedSeriesId, setSelectedSeriesId] = useState(initialData?.seriesId || "");
   const [internalError, setInternalError] = useState<string | null>(null);
   
   const error = externalError || internalError;
@@ -100,7 +101,8 @@ export function BookForm({
           className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50"
           required
           disabled={isSubmitting}
-          defaultValue={initialData?.seriesId || ""}
+          value={selectedSeriesId}
+          onChange={(e) => setSelectedSeriesId(e.target.value)}
         >
           <option value="">Select a series...</option>
           {seriesList.map((series) => (

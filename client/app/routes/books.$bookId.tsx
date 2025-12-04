@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLoaderData, useNavigate } from "react-router";
-import { booksApi, type Book, type Chapter, type Character, type Location, type Item } from "@/lib/api";
+import { booksApi, type Book, type Chapter, type Character, type Location, type Item, seriesApi } from "@/lib/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -32,9 +32,21 @@ export async function loader({ params }: Route.LoaderArgs) {
       booksApi.getLocations(bookId),
       booksApi.getItems(bookId),
     ]);
+
+    // Fetch series if the book has one
+    let series = null;
+    if (bookData.book.seriesId) {
+      try {
+        const seriesData = await seriesApi.getById(bookData.book.seriesId);
+        series = seriesData.series;
+      } catch (err) {
+        console.error("Failed to fetch series:", err);
+      }
+    }
     
     return {
       book: bookData.book,
+      series,
       chapters: chaptersData.chapters,
       characters: charactersData.characters,
       locations: locationsData.locations,
@@ -45,6 +57,7 @@ export async function loader({ params }: Route.LoaderArgs) {
     console.error("Failed to fetch book:", error);
     return {
       book: null,
+      series: null,
       chapters: [],
       characters: [],
       locations: [],
@@ -55,7 +68,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 }
 
 export default function BookDetail() {
-  const { book, chapters, characters, locations, items, error } = useLoaderData<typeof loader>();
+  const { book, series, chapters, characters, locations, items, error } = useLoaderData<typeof loader>();
   const { isAdmin } = useAuth();
   const token = getAuthToken() || "";
   const navigate = useNavigate();
@@ -141,6 +154,13 @@ export default function BookDetail() {
           <h1 className="text-3xl md:text-4xl font-bold mb-2">{book.title}</h1>
           <p className="text-xl text-muted-foreground mb-4">by {book.author || "Unknown Author"}</p>
           <p className="text-muted-foreground mb-6">{book.description || "No description available."}</p>
+          {series && (
+            <Button variant='outline' className='mb-3' asChild>
+              <Link to={`/series/${series.id}`}>
+                Go to {series.title}
+              </Link>
+            </Button>
+          )}
           <div className="flex flex-wrap gap-2">
             <Badge variant="secondary">
               <BookOpen className="mr-1 h-3 w-3" />

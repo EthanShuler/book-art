@@ -24,7 +24,7 @@ export function BooksList({
     <div className="space-y-4">
       {isAdmin && (
         <Button asChild variant="outline">
-          <Link to={`/admin/books/new`}>
+          <Link to={seriesId ? `/admin/books/new?seriesId=${seriesId}` : `/admin/books/new`}>
             <Plus className="mr-2 h-4 w-4" />
             Add Book
           </Link>

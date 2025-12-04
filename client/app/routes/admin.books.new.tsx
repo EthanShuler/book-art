@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +13,8 @@ export function meta() {
 
 export default function AdminBooksNew() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const seriesId = searchParams.get("seriesId") || undefined;
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,12 +38,16 @@ export default function AdminBooksNew() {
     }
   };
 
+  // Determine back link based on whether we came from a series
+  const backUrl = seriesId ? `/series/${seriesId}` : "/";
+  const backLabel = seriesId ? "Back to Series" : "Back to Home";
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <Button asChild variant="ghost" className="mb-6">
-        <Link to="/">
+        <Link to={backUrl}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Home
+          {backLabel}
         </Link>
       </Button>
 
@@ -54,9 +60,10 @@ export default function AdminBooksNew() {
         </CardHeader>
         <CardContent>
           <BookForm
+            initialData={{ seriesId }}
             onSubmit={handleSubmit}
             submitLabel="Create Book"
-            cancelUrl="/"
+            cancelUrl={backUrl}
             isSubmitting={isSubmitting}
             error={error}
           />

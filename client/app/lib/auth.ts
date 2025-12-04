@@ -56,10 +56,15 @@ export function useAuth(): AuthState {
 }
 
 export function logout() {
-  localStorage.removeItem("token");
-  window.location.reload();
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("token");
+    window.location.reload();
+  }
 }
 
 export function getAuthToken(): string | null {
+  if (typeof window === "undefined") {
+    return null;
+  }
   return localStorage.getItem("token");
 }

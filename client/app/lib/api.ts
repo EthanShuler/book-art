@@ -160,6 +160,7 @@ export interface Series {
 
 export interface Book {
   id: string;
+  seriesId: string | null;
   title: string;
   author: string | null;
   description: string | null;
