@@ -20,4 +20,6 @@ export default [
   route("admin/books/new", "routes/admin.books.new.tsx"),
   route("admin/books/:bookId/edit", "routes/admin.books.$bookId.edit.tsx"),
   route("admin/books/:bookId/chapters/new", "routes/admin.books.$bookId.chapters.new.tsx"),
+  route("admin/characters/new", "routes/admin.characters.new.tsx"),
+  route("admin/characters/:characterId/edit", "routes/admin.characters.$characterId.edit.tsx"),
 ] satisfies RouteConfig;

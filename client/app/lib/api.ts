@@ -101,6 +101,24 @@ export const chaptersApi = {
 export const charactersApi = {
   getById: (id: string) => fetchApi<{ character: Character }>(`/characters/${id}`),
   getArt: (characterId: string) => fetchApi<{ art: Art[] }>(`/characters/${characterId}/art`),
+  getBooks: (characterId: string) => fetchApi<{ books: Book[] }>(`/characters/${characterId}/books`),
+  create: (data: { seriesId: string; name: string; description?: string; imageUrl?: string; bookIds?: string[] }, token: string) =>
+    fetchApi<{ character: Character }>('/characters', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    }),
+  update: (id: string, data: { name?: string; description?: string; imageUrl?: string; bookIds?: string[] }, token: string) =>
+    fetchApi<{ character: Character }>(`/characters/${id}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    }),
+  delete: (id: string, token: string) =>
+    fetchApi<{ message: string }>(`/characters/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    }),
 };
 
 // Locations API
@@ -181,7 +199,7 @@ export interface Chapter {
 
 export interface Character {
   id: string;
-  bookId: string;
+  seriesId: string;
   name: string;
   description: string | null;
   imageUrl: string | null;
@@ -191,7 +209,7 @@ export interface Character {
 
 export interface Location {
   id: string;
-  bookId: string;
+  seriesId: string;
   name: string;
   description: string | null;
   imageUrl: string | null;
@@ -201,7 +219,7 @@ export interface Location {
 
 export interface Item {
   id: string;
-  bookId: string;
+  seriesId: string;
   name: string;
   description: string | null;
   imageUrl: string | null;

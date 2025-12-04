@@ -44,6 +44,12 @@ export function Navbar() {
                   Create Book
                 </Link>
               </Button>
+              <Button asChild size="sm" variant="outline">
+                <Link to="/admin/characters/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Character
+                </Link>
+              </Button>
               <Button size="sm" variant="outline" onClick={logout}>
                 Logout
               </Button>

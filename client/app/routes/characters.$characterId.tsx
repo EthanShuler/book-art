@@ -1,9 +1,11 @@
-import { Link, useLoaderData } from "react-router";
+import { useState } from "react";
+import { Link, useLoaderData, useNavigate } from "react-router";
 import { charactersApi, type Character } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Users } from "lucide-react";
+import { ArrowLeft, Users, Pencil, Trash2 } from "lucide-react";
 import { ArtGrid } from "@/components/art-grid";
+import { useAuth, getAuthToken } from "@/lib/auth";
 import type { Route } from "./+types/characters.$characterId";
 
 export function meta({ data }: Route.MetaArgs) {
@@ -40,6 +42,28 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export default function CharacterDetail() {
   const { character, art, error } = useLoaderData<typeof loader>();
+  const { isAdmin } = useAuth();
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this character? This action cannot be undone.")) {
+      return;
+    }
+
+    const token = getAuthToken();
+    if (!token || !character) return;
+
+    setIsDeleting(true);
+    try {
+      await charactersApi.delete(character.id, token);
+      navigate(`/series/${character.seriesId}`);
+    } catch (err) {
+      console.error("Failed to delete character:", err);
+      alert("Failed to delete character");
+      setIsDeleting(false);
+    }
+  };
 
   if (error || !character) {
     return (
@@ -61,15 +85,16 @@ export default function CharacterDetail() {
     <div className="container mx-auto px-4 py-8">
       {/* Back Button */}
       <Button asChild variant="ghost" className="mb-6">
-        <Link to={`/books/${character.bookId}`}>
+        <Link to={`/series/${character.seriesId}`}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Book
+          Back to Series
         </Link>
       </Button>
 
       {/* Character Header */}
       <div className="flex flex-col md:flex-row gap-8 mb-8">
         <div className="w-full md:w-64 shrink-0">
+          
           <div className="aspect-square rounded-lg overflow-hidden bg-muted shadow-lg">
             {character.imageUrl ? (
               <img
@@ -88,7 +113,28 @@ export default function CharacterDetail() {
           <Badge variant="secondary" className="mb-2">Character</Badge>
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{character.name}</h1>
           {character.description && (
-            <p className="text-muted-foreground">{character.description}</p>
+            <p className="text-muted-foreground mb-4">{character.description}</p>
+          )}
+          
+          {/* Admin Controls */}
+          {isAdmin && (
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link to={`/admin/characters/${character.id}/edit`}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </Link>
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
           )}
         </div>
       </div>
