@@ -213,6 +213,37 @@ export const authApi = {
   me: () => fetchApi<{ user: User | null }>('/auth/me'),
 };
 
+// Search API
+export interface SearchResultItem {
+  type: 'series' | 'book' | 'chapter' | 'character' | 'location' | 'item';
+  id: string;
+  name: string;
+  description: string | null;
+  imageUrl: string | null;
+  parentId?: string;
+  parentName?: string;
+}
+
+export interface SearchResults {
+  query: string;
+  totalCount: number;
+  results: {
+    series: SearchResultItem[];
+    books: SearchResultItem[];
+    chapters: SearchResultItem[];
+    characters: SearchResultItem[];
+    locations: SearchResultItem[];
+    items: SearchResultItem[];
+  };
+}
+
+export const searchApi = {
+  search: (query: string, limit = 20) =>
+    fetchApi<SearchResults>('/search', {
+      params: { q: query, limit: String(limit) },
+    }),
+};
+
 // Types
 export interface Series {
   id: string;

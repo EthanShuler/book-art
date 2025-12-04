@@ -8,6 +8,7 @@ import itemsRoutes from './items';
 import artRoutes from './art';
 import artistsRoutes from './artists';
 import seriesRoutes from './series';
+import searchRoutes from './search';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use('/locations', locationsRoutes);
 router.use('/items', itemsRoutes);
 router.use('/art', artRoutes);
 router.use('/artists', artistsRoutes);
+router.use('/search', searchRoutes);
 
 export default router;
