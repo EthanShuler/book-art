@@ -182,4 +182,29 @@ router.get('/:id/art', async (req: Request, res: Response) => {
   }
 });
 
+// GET /api/items - Get all items with optional pagination
+router.get('/', async (req: Request, res: Response) => {
+  try {
+    const { page = 1, limit = 20 } = req.query;
+    const offset = (Number(page) - 1) * Number(limit);
+    
+    const countResult = await query('SELECT COUNT(*) FROM items');
+    const total = parseInt(countResult.rows[0].count);
+    
+    const result = await query(
+      `SELECT * FROM items ORDER BY name ASC LIMIT $1 OFFSET $2`,
+      [Number(limit), offset]
+    );
+    
+    res.json({
+      items: rowsToCamelCase(result.rows),
+      total,
+      page: Number(page),
+      limit: Number(limit)
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch items' });
+  }
+});
+
 export default router;

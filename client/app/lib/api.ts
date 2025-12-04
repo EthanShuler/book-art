@@ -99,6 +99,10 @@ export const chaptersApi = {
 
 // Characters API
 export const charactersApi = {
+  getAll: (page = 1, limit = 20) => 
+    fetchApi<{ characters: Character[]; total: number; page: number; limit: number }>('/characters', { 
+      params: { page: String(page), limit: String(limit) } 
+    }),
   getById: (id: string) => fetchApi<{ character: Character }>(`/characters/${id}`),
   getArt: (characterId: string) => fetchApi<{ art: Art[] }>(`/characters/${characterId}/art`),
   getBooks: (characterId: string) => fetchApi<{ books: Book[] }>(`/characters/${characterId}/books`),
@@ -123,6 +127,10 @@ export const charactersApi = {
 
 // Locations API
 export const locationsApi = {
+  getAll: (page = 1, limit = 20) => 
+    fetchApi<{ locations: Location[]; total: number; page: number; limit: number }>('/locations', { 
+      params: { page: String(page), limit: String(limit) } 
+    }),
   getById: (id: string) => fetchApi<{ location: Location }>(`/locations/${id}`),
   getArt: (locationId: string) => fetchApi<{ art: Art[] }>(`/locations/${locationId}/art`),
   getBooks: (locationId: string) => fetchApi<{ books: Book[] }>(`/locations/${locationId}/books`),
@@ -147,6 +155,10 @@ export const locationsApi = {
 
 // Items API
 export const itemsApi = {
+  getAll: (page = 1, limit = 20) => 
+    fetchApi<{ items: Item[]; total: number; page: number; limit: number }>('/items', { 
+      params: { page: String(page), limit: String(limit) } 
+    }),
   getById: (id: string) => fetchApi<{ item: Item }>(`/items/${id}`),
   getArt: (itemId: string) => fetchApi<{ art: Art[] }>(`/items/${itemId}/art`),
   getBooks: (itemId: string) => fetchApi<{ books: Book[] }>(`/items/${itemId}/books`),
