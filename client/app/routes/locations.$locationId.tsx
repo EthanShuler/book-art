@@ -1,9 +1,11 @@
-import { Link, useLoaderData } from "react-router";
+import { useState } from "react";
+import { Link, useLoaderData, useNavigate } from "react-router";
 import { locationsApi, type Location } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, MapPin } from "lucide-react";
+import { ArrowLeft, MapPin, Pencil, Trash2 } from "lucide-react";
 import { ArtGrid } from "@/components/art-grid";
+import { useAuth, getAuthToken } from "@/lib/auth";
 import type { Route } from "./+types/locations.$locationId";
 
 export function meta({ data }: Route.MetaArgs) {
@@ -40,6 +42,28 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export default function LocationDetail() {
   const { location, art, error } = useLoaderData<typeof loader>();
+  const { isAdmin } = useAuth();
+  const navigate = useNavigate();
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!confirm("Are you sure you want to delete this location? This action cannot be undone.")) {
+      return;
+    }
+
+    const token = getAuthToken();
+    if (!token || !location) return;
+
+    setIsDeleting(true);
+    try {
+      await locationsApi.delete(location.id, token);
+      navigate(`/series/${location.seriesId}`);
+    } catch (err) {
+      console.error("Failed to delete location:", err);
+      alert("Failed to delete location");
+      setIsDeleting(false);
+    }
+  };
 
   if (error || !location) {
     return (
@@ -61,9 +85,9 @@ export default function LocationDetail() {
     <div className="container mx-auto px-4 py-8">
       {/* Back Button */}
       <Button asChild variant="ghost" className="mb-6">
-        <Link to={`/books/${location.bookId}`}>
+        <Link to={`/series/${location.seriesId}`}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Book
+          Back to Series
         </Link>
       </Button>
 
@@ -88,7 +112,28 @@ export default function LocationDetail() {
           <Badge variant="secondary" className="mb-2">Location</Badge>
           <h1 className="text-3xl md:text-4xl font-bold mb-4">{location.name}</h1>
           {location.description && (
-            <p className="text-muted-foreground">{location.description}</p>
+            <p className="text-muted-foreground mb-4">{location.description}</p>
+          )}
+          
+          {/* Admin Controls */}
+          {isAdmin && (
+            <div className="flex gap-2">
+              <Button asChild variant="outline" size="sm">
+                <Link to={`/admin/locations/${location.id}/edit`}>
+                  <Pencil className="mr-2 h-4 w-4" />
+                  Edit
+                </Link>
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                {isDeleting ? "Deleting..." : "Delete"}
+              </Button>
+            </div>
           )}
         </div>
       </div>

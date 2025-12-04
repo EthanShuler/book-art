@@ -125,6 +125,24 @@ export const charactersApi = {
 export const locationsApi = {
   getById: (id: string) => fetchApi<{ location: Location }>(`/locations/${id}`),
   getArt: (locationId: string) => fetchApi<{ art: Art[] }>(`/locations/${locationId}/art`),
+  getBooks: (locationId: string) => fetchApi<{ books: Book[] }>(`/locations/${locationId}/books`),
+  create: (data: { seriesId: string; name: string; description?: string; imageUrl?: string; bookIds?: string[] }, token: string) =>
+    fetchApi<{ location: Location }>('/locations', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    }),
+  update: (id: string, data: { name?: string; description?: string; imageUrl?: string; bookIds?: string[] }, token: string) =>
+    fetchApi<{ location: Location }>(`/locations/${id}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    }),
+  delete: (id: string, token: string) =>
+    fetchApi<{ message: string }>(`/locations/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    }),
 };
 
 // Items API

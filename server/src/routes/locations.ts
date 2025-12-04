@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { query } from '../db';
 import { adminOnly } from '../middleware/auth';
-import { rowsToCamelCase } from '../utils/caseConverter';
+import { toCamelCase, rowsToCamelCase } from '../utils/caseConverter';
 
 const router = Router();
 
@@ -17,7 +17,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       res.status(404).json({ error: 'Location not found' });
       return;
     }
-    res.json({ location: result.rows[0] });
+    res.json({ location: toCamelCase(result.rows[0]) });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch location' });
   }
@@ -34,7 +34,7 @@ router.get('/:id/books', async (req: Request, res: Response) => {
        ORDER BY b.title ASC`,
       [id]
     );
-    res.json(result.rows);
+    res.json({ books: rowsToCamelCase(result.rows) });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch books for location' });
   }
@@ -66,8 +66,9 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
       );
     }
 
-    res.status(201).json({ location });
+    res.status(201).json({ location: toCamelCase(location) });
   } catch (error) {
+    console.error('Error creating location:', error);
     res.status(500).json({ error: 'Failed to create location' });
   }
 });
@@ -111,8 +112,9 @@ router.put('/:id', adminOnly, async (req: Request, res: Response) => {
       }
     }
 
-    res.json({ location: result.rows[0] });
+    res.json({ location: toCamelCase(result.rows[0]) });
   } catch (error) {
+    console.error('Error updating location:', error);
     res.status(500).json({ error: 'Failed to update location' });
   }
 });
