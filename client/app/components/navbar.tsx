@@ -56,7 +56,13 @@ export function Navbar() {
                   Create Location
                 </Link>
               </Button>
-              <Button size="sm" variant="outline" onClick={logout}>
+              <Button asChild size="sm" variant="outline">
+                <Link to="/admin/items/new">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Item
+                </Link>
+              </Button>
+              <Button size="sm" variant="outline" onClick={logout} className='float-right'>
                 Logout
               </Button>
             </div>

@@ -1,9 +1,10 @@
-import { Link, useLoaderData } from "react-router";
+import { Link, useLoaderData, useNavigate } from "react-router";
 import { itemsApi, type Item } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Package } from "lucide-react";
+import { ArrowLeft, Package, Pencil, Trash2 } from "lucide-react";
 import { ArtGrid } from "@/components/art-grid";
+import { useAuth, getAuthToken } from "@/lib/auth";
 import type { Route } from "./+types/items.$itemId";
 
 export function meta({ data }: Route.MetaArgs) {
@@ -40,6 +41,26 @@ export async function loader({ params }: Route.LoaderArgs) {
 
 export default function ItemDetail() {
   const { item, art, error } = useLoaderData<typeof loader>();
+  const { isAdmin } = useAuth();
+  const navigate = useNavigate();
+
+  const handleDelete = async () => {
+    if (!item) return;
+    if (!confirm(`Are you sure you want to delete "${item.name}"?`)) return;
+
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        alert("You must be logged in to delete an item");
+        return;
+      }
+      await itemsApi.delete(item.id, token);
+      navigate(`/series/${item.seriesId}`);
+    } catch (err) {
+      console.error("Failed to delete item:", err);
+      alert(err instanceof Error ? err.message : "Failed to delete item");
+    }
+  };
 
   if (error || !item) {
     return (
@@ -61,11 +82,27 @@ export default function ItemDetail() {
     <div className="container mx-auto px-4 py-8">
       {/* Back Button */}
       <Button asChild variant="ghost" className="mb-6">
-        <Link to={`/books/${item.bookId}`}>
+        <Link to={`/series/${item.seriesId}`}>
           <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Book
+          Back to Series
         </Link>
       </Button>
+
+      {/* Admin Controls */}
+      {isAdmin && (
+        <div className="flex gap-2 mb-6">
+          <Button asChild variant="outline">
+            <Link to={`/admin/items/${item.id}/edit`}>
+              <Pencil className="mr-2 h-4 w-4" />
+              Edit Item
+            </Link>
+          </Button>
+          <Button variant="destructive" onClick={handleDelete}>
+            <Trash2 className="mr-2 h-4 w-4" />
+            Delete Item
+          </Button>
+        </div>
+      )}
 
       {/* Item Header */}
       <div className="flex flex-col md:flex-row gap-8 mb-8">

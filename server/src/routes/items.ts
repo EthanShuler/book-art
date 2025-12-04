@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { query } from '../db';
 import { adminOnly } from '../middleware/auth';
-import { rowsToCamelCase } from '../utils/caseConverter';
+import { toCamelCase, rowsToCamelCase } from '../utils/caseConverter';
 
 const router = Router();
 
@@ -17,7 +17,7 @@ router.get('/:id', async (req: Request, res: Response) => {
       res.status(404).json({ error: 'Item not found' });
       return;
     }
-    res.json({ item: result.rows[0] });
+    res.json({ item: toCamelCase(result.rows[0]) });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch item' });
   }
@@ -34,7 +34,7 @@ router.get('/:id/books', async (req: Request, res: Response) => {
        ORDER BY b.title ASC`,
       [id]
     );
-    res.json(result.rows);
+    res.json({ books: rowsToCamelCase(result.rows) });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch books for item' });
   }
@@ -66,7 +66,7 @@ router.post('/', adminOnly, async (req: Request, res: Response) => {
       );
     }
 
-    res.status(201).json({ item });
+    res.status(201).json({ item: toCamelCase(item) });
   } catch (error) {
     res.status(500).json({ error: 'Failed to create item' });
   }
@@ -111,7 +111,7 @@ router.put('/:id', adminOnly, async (req: Request, res: Response) => {
       }
     }
 
-    res.json({ item: result.rows[0] });
+    res.json({ item: toCamelCase(result.rows[0]) });
   } catch (error) {
     res.status(500).json({ error: 'Failed to update item' });
   }

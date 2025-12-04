@@ -149,6 +149,24 @@ export const locationsApi = {
 export const itemsApi = {
   getById: (id: string) => fetchApi<{ item: Item }>(`/items/${id}`),
   getArt: (itemId: string) => fetchApi<{ art: Art[] }>(`/items/${itemId}/art`),
+  getBooks: (itemId: string) => fetchApi<{ books: Book[] }>(`/items/${itemId}/books`),
+  create: (data: { seriesId: string; name: string; description?: string; imageUrl?: string; bookIds?: string[] }, token: string) =>
+    fetchApi<{ item: Item }>('/items', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    }),
+  update: (id: string, data: { name?: string; description?: string; imageUrl?: string; bookIds?: string[] }, token: string) =>
+    fetchApi<{ item: Item }>(`/items/${id}`, {
+      method: 'PUT',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    }),
+  delete: (id: string, token: string) =>
+    fetchApi<{ message: string }>(`/items/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    }),
 };
 
 // Art API

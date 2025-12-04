@@ -25,7 +25,7 @@ export function ItemsList({
     <div className="space-y-4">
       {isAdmin && seriesId && (
         <Button asChild variant="outline">
-          <Link to={`/admin/series/${seriesId}/items/new`}>
+          <Link to={`/admin/items/new?seriesId=${seriesId}`}>
             <Plus className="mr-2 h-4 w-4" />
             Add Item
           </Link>
