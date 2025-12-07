@@ -11,14 +11,16 @@ interface ArtPieceProps {
 export function ArtPiece({ art, index }: ArtPieceProps) {
   return (
     <Card className="overflow-hidden">
-      <div className="relative bg-muted">
-        <img
-          src={art.imageUrl}
-          alt={art.title || `Art piece ${index}`}
-          className="w-full h-auto max-h-[80vh] object-contain mx-auto"
-          loading="lazy"
-        />
-      </div>
+      <Link to={`/art/${art.id}`} className="block">
+        <div className="relative bg-muted cursor-pointer hover:opacity-90 transition-opacity">
+          <img
+            src={art.imageUrl}
+            alt={art.title || `Art piece ${index}`}
+            className="w-full h-auto max-h-[80vh] object-contain mx-auto"
+            loading="lazy"
+          />
+        </div>
+      </Link>
       <CardContent className="p-4 md:p-6">
         <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2">
           <div>

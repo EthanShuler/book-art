@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import { Card, CardContent } from "@/components/ui/card";
 import { Image } from "lucide-react";
 import type { Art } from "@/lib/api";
@@ -20,24 +21,26 @@ export function ArtGrid({ art, emptyMessage = "No artwork available yet." }: Art
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
       {art.map((piece) => (
-        <Card key={piece.id} className="overflow-hidden group">
-          <div className="aspect-video relative bg-muted overflow-hidden">
-            <img
-              src={piece.imageUrl}
-              alt={piece.title || "Artwork"}
-              className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-              loading="lazy"
-            />
-          </div>
-          <CardContent className="p-3">
-            {piece.title && (
-              <p className="font-medium truncate">{piece.title}</p>
-            )}
-            {piece.artist && (
-              <p className="text-sm text-muted-foreground">by {piece.artist}</p>
-            )}
-          </CardContent>
-        </Card>
+        <Link key={piece.id} to={`/art/${piece.id}`}>
+          <Card className="overflow-hidden group cursor-pointer">
+            <div className="aspect-video relative bg-muted overflow-hidden">
+              <img
+                src={piece.imageUrl}
+                alt={piece.title || "Artwork"}
+                className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+            </div>
+            <CardContent className="p-3">
+              {piece.title && (
+                <p className="font-medium truncate">{piece.title}</p>
+              )}
+              {piece.artist && (
+                <p className="text-sm text-muted-foreground">by {piece.artist}</p>
+              )}
+            </CardContent>
+          </Card>
+        </Link>
       ))}
     </div>
   );

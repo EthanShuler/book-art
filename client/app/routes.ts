@@ -11,6 +11,7 @@ export default [
     route("characters/:characterId", "routes/characters.$characterId.tsx"),
     route("locations/:locationId", "routes/locations.$locationId.tsx"),
     route("items/:itemId", "routes/items.$itemId.tsx"),
+    route("art/:artId", "routes/art.$artId.tsx"),
     route("search", "routes/search.tsx"),
   ]),
   // Admin routes (not linked in UI)
